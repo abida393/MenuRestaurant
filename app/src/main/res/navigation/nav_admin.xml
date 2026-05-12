@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_admin"
+    app:startDestination="@id/navigation_dashboard">
+
+    <fragment
+        android:id="@+id/navigation_dashboard"
+        android:name="com.savoria.app.ui.admin.dashboard.DashboardFragment"
+        android:label="Dashboard"
+        tools:layout="@layout/fragment_dashboard">
+        <action
+            android:id="@+id/action_dashboard_to_add_dish"
+            app:destination="@id/navigation_add_dish" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_plats"
+        android:name="com.savoria.app.ui.admin.plats.GestionPlatsFragment"
+        android:label="Dishes"
+        tools:layout="@layout/fragment_gestion_plats">
+        <action
+            android:id="@+id/action_plats_to_add_dish"
+            app:destination="@id/navigation_add_dish" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_categories"
+        android:name="com.savoria.app.ui.admin.categories.GestionCategoriesFragment"
+        android:label="Categories"
+        tools:layout="@layout/fragment_gestion_categories" />
+
+    <fragment
+        android:id="@+id/navigation_add_dish"
+        android:name="com.savoria.app.ui.admin.plats.AddEditDishFragment"
+        android:label="Add / Edit Dish"
+        tools:layout="@layout/fragment_add_edit_dish" />
+
+</navigation>

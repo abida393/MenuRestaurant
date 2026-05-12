@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:background="@drawable/bg_form_card"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Top row: image + name + description -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:orientation="horizontal">
+
+        <!-- Dish image -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_dish_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.SmallComponent"
+            tools:src="@mipmap/ic_launcher" />
+
+        <!-- Name + description -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_dish_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="#1C1C1A"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:text="Summer Harvest Bowl" />
+
+            <TextView
+                android:id="@+id/tv_dish_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:lineSpacingMultiplier="1.4"
+                android:textColor="#999990"
+                android:textSize="13sp"
+                tools:text="Light vinaigrette, organic sprouts, heirloom radishes" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Category badge -->
+    <TextView
+        android:id="@+id/tv_category_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_category_badge"
+        android:letterSpacing="0.1"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="4dp"
+        android:textColor="#777770"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        tools:text="APPETIZER" />
+
+    <!-- Price + Actions row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <!-- Price -->
+        <TextView
+            android:id="@+id/tv_dish_price"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="serif"
+            android:textColor="#A02020"
+            android:textSize="20sp"
+            android:textStyle="bold|italic"
+            tools:text="$24.00" />
+
+        <!-- Edit button -->
+        <ImageView
+            android:id="@+id/btn_edit_dish"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="8dp"
+            android:src="@android:drawable/ic_menu_edit"
+            android:tint="#AAAAAA" />
+
+        <!-- Delete button -->
+        <ImageView
+            android:id="@+id/btn_delete_dish"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="4dp"
+            android:padding="8dp"
+            android:src="@android:drawable/ic_menu_delete"
+            android:tint="#AAAAAA" />
+    </LinearLayout>
+
+</LinearLayout>

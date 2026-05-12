@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Savoria</string>
+    <string name="action_settings">Paramètres</string>
+
+    <!-- Navigation labels -->
+    <string name="nav_dashboard">Tableau de bord</string>
+    <string name="nav_plats">Gestion Plats</string>
+    <string name="nav_categories">Catégories</string>
+    <string name="nav_settings">Paramètres</string>
+
+    <!-- Actions -->
+    <string name="btn_ajouter_plat">Ajouter un Plat</string>
+
+    <!-- Common -->
+    <string name="loading">Chargement...</string>
+    <string name="error_generic">Une erreur est survenue</string>
+    <string name="empty_list">Aucun élément trouvé</string>
+    <string name="todo">À FAIRE</string>
+    <string name="todo2">À FAIRE</string>
+    <string name="todo3">À FAIRE</string>
+    <string name="please_enter_your_credentials_to_access_the_maitre_d_dashboard">VEUILLEZ SAISIR VOS IDENTIFIANTS POUR ACCÉDER AU TABLEAU DE BORD DU MAÎTRE D\'HÔTEL</string>
+    <string name="corporate_email">ADRESSE E-MAIL PROFESSIONNELLE</string>
+    <string name="access_key">CLÉ D\'ACCÈS</string>
+    <string name="secure_administrative_portal_all_access_is_logged_and_monitored">Portail administratif sécurisé. Tous les accès sont enregistrés et surveillés.</string>
+    <string name="need_assistance">Besoin d\'aide ?</string>
+    <string name="enter_workspace">ENTRER DANS L\'ESPACE DE TRAVAIL &#8594;</string>
+    <string name="manager_savoria_com">manager@savoria.com</string>
+    <string name="Pass">••••••••••••</string>
+    <string name="contact_system_administrator">Contacter l\'administrateur système</string>
+    <string name="recover_password">RÉCUPÉRER LE MOT DE PASSE</string>
+    <string name="savoria_admin">Administrateur Savoria</string>
+</resources>

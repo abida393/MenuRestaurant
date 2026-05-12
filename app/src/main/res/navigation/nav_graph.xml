@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/navigation_home">
+
+    <!-- Home — start destination (matches bottom nav id) -->
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.savoria.app.ui.client.home.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_home_to_detail"
+            app:destination="@id/navigation_dish_detail" />
+    </fragment>
+
+    <!-- Menu (matches bottom nav id) -->
+    <fragment
+        android:id="@+id/navigation_menu_client"
+        android:name="com.savoria.app.ui.client.menu.MenuFragment"
+        android:label="Menu"
+        tools:layout="@layout/fragment_menu">
+        <action
+            android:id="@+id/action_menu_to_detail"
+            app:destination="@id/navigation_dish_detail" />
+    </fragment>
+
+    <!-- Favorites (matches bottom nav id) -->
+    <fragment
+        android:id="@+id/navigation_favorites"
+        android:name="com.savoria.app.ui.client.favoris.FavoritesFragment"
+        android:label="Favorites"
+        tools:layout="@layout/fragment_favorites">
+        <action
+            android:id="@+id/action_favorites_to_detail"
+            app:destination="@id/navigation_dish_detail" />
+    </fragment>
+
+    <!-- Dish Detail — pushed on back-stack, not in bottom nav -->
+    <fragment
+        android:id="@+id/navigation_dish_detail"
+        android:name="com.savoria.app.ui.client.detail.DishDetailFragment"
+        android:label="Dish Detail"
+        tools:layout="@layout/fragment_dish_detail">
+        <action
+            android:id="@+id/action_detail_pop"
+            app:destination="@id/navigation_home"
+            app:popUpTo="@id/navigation_home"
+            app:popUpToInclusive="false" />
+    </fragment>
+
+    <!-- Cart (matches bottom nav id) -->
+    <fragment
+        android:id="@+id/navigation_cart"
+        android:name="com.savoria.app.ui.client.cart.CartFragment"
+        android:label="Cart"
+        tools:layout="@layout/fragment_cart" />
+
+</navigation>
