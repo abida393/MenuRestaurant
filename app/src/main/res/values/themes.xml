@@ -1,8 +1,31 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.RestaurantManager" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+
+        <!-- Typography -->
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.Savoria.HeadlineLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.Savoria.TitleMedium</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.Savoria.BodyMedium</item>
+    </style>
+
+    <style name="TextAppearance.Savoria.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:fontFamily">serif</item>
+        <item name="android:textStyle">bold|italic</item>
+        <item name="android:textColor">#1C1C1A</item>
+    </style>
+
+    <style name="TextAppearance.Savoria.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">#1C1C1A</item>
+    </style>
+
+    <style name="TextAppearance.Savoria.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">#777770</item>
     </style>
 
     <style name="Theme.RestaurantManager" parent="Base.Theme.RestaurantManager" />

@@ -28,6 +28,7 @@
 
             <!-- Favorite Star Icon -->
             <ImageView
+                android:id="@+id/iv_remove_favorite"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_gravity="top|end"

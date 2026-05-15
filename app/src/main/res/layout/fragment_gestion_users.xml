@@ -20,7 +20,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="serif"
-                android:text="Categories"
+                android:text="Utilisateurs"
                 android:textColor="#1C1C1A"
                 android:textSize="28sp"
                 android:textStyle="bold|italic" />
@@ -32,9 +32,9 @@
                 android:layout_marginBottom="24dp"
                 android:background="@drawable/bg_divider_red" />
 
-            <!-- Dynamic category list container -->
+            <!-- Dynamic user list container -->
             <LinearLayout
-                android:id="@+id/ll_category_list"
+                android:id="@+id/ll_user_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
@@ -43,12 +43,12 @@
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add_category"
+        android:id="@+id/fab_add_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="24dp"
-        android:contentDescription="Ajouter une catégorie"
+        android:contentDescription="Ajouter un utilisateur"
         android:src="@android:drawable/ic_input_add"
         app:backgroundTint="#A02020"
         app:tint="#FFFFFF" />

@@ -4,4 +4,8 @@
         android:id="@+id/navigation_chef_orders"
         android:icon="@android:drawable/ic_menu_sort_by_size"
         android:title="Commandes" />
+    <item
+        android:id="@+id/navigation_gestion_plats"
+        android:icon="@android:drawable/ic_menu_agenda"
+        android:title="Menu" />
 </menu>

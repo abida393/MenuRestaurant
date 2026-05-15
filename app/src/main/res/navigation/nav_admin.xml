@@ -13,6 +13,12 @@
         <action
             android:id="@+id/action_dashboard_to_add_dish"
             app:destination="@id/navigation_add_dish" />
+        <action
+            android:id="@+id/action_dashboard_to_plats"
+            app:destination="@id/navigation_plats" />
+        <action
+            android:id="@+id/action_dashboard_to_users"
+            app:destination="@id/navigation_users" />
     </fragment>
 
     <fragment
@@ -30,6 +36,12 @@
         android:name="com.savoria.app.ui.admin.categories.GestionCategoriesFragment"
         android:label="Categories"
         tools:layout="@layout/fragment_gestion_categories" />
+
+    <fragment
+        android:id="@+id/navigation_users"
+        android:name="com.savoria.app.ui.admin.settings.GestionUsersFragment"
+        android:label="Utilisateurs"
+        tools:layout="@layout/fragment_gestion_users" />
 
     <fragment
         android:id="@+id/navigation_add_dish"

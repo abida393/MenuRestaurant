@@ -28,9 +28,10 @@ class MenuFragment : Fragment() {
     private lateinit var viewModel: SharedDishViewModel
     private var allDishes: List<Dish> = emptyList()
 
-    private var currentCategory = "All Dishes"
+    private var currentCategoryId: String? = null
     private var currentSearchQuery = ""
     private lateinit var container: LinearLayout
+    private lateinit var categoryContainer: LinearLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,6 +44,7 @@ class MenuFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         container = view.findViewById(R.id.ll_dish_list)
+        categoryContainer = view.findViewById(R.id.ll_category_chips)
         viewModel = ViewModelProvider(requireActivity())[SharedDishViewModel::class.java]
 
         // Admin login button
@@ -67,37 +69,6 @@ class MenuFragment : Fragment() {
             (activity as? com.savoria.app.ClientActivity)?.openDrawer()
         }
 
-        // Filter chips setup
-        val chipAll = view.findViewById<TextView>(R.id.chip_all)
-        val chipMains = view.findViewById<TextView>(R.id.chip_mains)
-        val chipStarters = view.findViewById<TextView>(R.id.chip_starters)
-        val chipDesserts = view.findViewById<TextView>(R.id.chip_desserts)
-        val chipSeafood = view.findViewById<TextView>(R.id.chip_seafood)
-
-        val chips = listOf(chipAll, chipMains, chipStarters, chipDesserts, chipSeafood)
-        val categoryMap = mapOf(
-            chipAll to "All Dishes",
-            chipMains to "Mains",
-            chipStarters to "Starters",
-            chipDesserts to "Desserts",
-            chipSeafood to "Seafood"
-        )
-
-        chips.forEach { chip ->
-            chip.setOnClickListener {
-                // Visual selection feedback
-                chips.forEach { c ->
-                    c.setBackgroundResource(R.drawable.bg_btn_grey_pill)
-                    c.setTextColor(0xFF555555.toInt())
-                }
-                chip.setBackgroundResource(R.drawable.bg_stat_card_dark)
-                chip.setTextColor(0xFFFFFFFF.toInt())
-                
-                currentCategory = categoryMap[chip] ?: "All Dishes"
-                filterAndPopulateDishes()
-            }
-        }
-
         // Search bar setup
         val etSearch = view.findViewById<EditText>(R.id.et_search)
         etSearch.addTextChangedListener(object : TextWatcher {
@@ -109,11 +80,69 @@ class MenuFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // Observe ViewModel
+        // Observe ViewModel for Categories
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.allCategories.collect { categories ->
+                populateCategories(categories)
+            }
+        }
+
+        // Observe ViewModel for Dishes
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.allDishes.collect { dishes ->
                 allDishes = dishes
                 filterAndPopulateDishes()
+            }
+        }
+    }
+
+    private fun populateCategories(categories: List<com.savoria.app.data.local.entity.Category>) {
+        categoryContainer.removeAllViews()
+        
+        // Add "All Dishes" chip
+        val allChip = createCategoryChip(null, "Tous les Plats")
+        categoryContainer.addView(allChip)
+        
+        categories.forEach { category ->
+            val chip = createCategoryChip(category.id, category.nom)
+            categoryContainer.addView(chip)
+        }
+        
+        updateChipSelection()
+    }
+
+    private fun createCategoryChip(id: String?, name: String): TextView {
+        val tv = TextView(context).apply {
+            text = name
+            textSize = 12f
+            setPadding(40, 20, 40, 20)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                setMargins(0, 0, 16, 0)
+            }
+            setOnClickListener {
+                currentCategoryId = id
+                updateChipSelection()
+                filterAndPopulateDishes()
+            }
+        }
+        tv.tag = id
+        return tv
+    }
+
+    private fun updateChipSelection() {
+        for (i in 0 until categoryContainer.childCount) {
+            val child = categoryContainer.getChildAt(i) as? TextView ?: continue
+            val isSelected = child.tag == currentCategoryId
+            
+            if (isSelected) {
+                child.setBackgroundResource(R.drawable.bg_stat_card_dark)
+                child.setTextColor(0xFFFFFFFF.toInt())
+            } else {
+                child.setBackgroundResource(R.drawable.bg_btn_grey_pill)
+                child.setTextColor(0xFF555555.toInt())
             }
         }
     }
@@ -124,7 +153,7 @@ class MenuFragment : Fragment() {
         val inflater = LayoutInflater.from(context)
 
         val filteredDishes = allDishes.filter { dish ->
-            val matchesCategory = currentCategory == "All Dishes" || dish.categoryId == currentCategory
+            val matchesCategory = currentCategoryId == null || dish.categoryId == currentCategoryId
             val matchesSearch = dish.nom.lowercase(Locale.getDefault()).contains(currentSearchQuery.lowercase(Locale.getDefault())) ||
                                 dish.description.lowercase(Locale.getDefault()).contains(currentSearchQuery.lowercase(Locale.getDefault()))
             matchesCategory && matchesSearch

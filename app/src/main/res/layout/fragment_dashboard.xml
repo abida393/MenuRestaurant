@@ -274,7 +274,7 @@
                 android:tint="#E0D8D0" />
         </LinearLayout>
 
-        <!-- Card 4: Views Today — DARK RED -->
+        <!-- Card 4: Revenue — DARK RED -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -291,30 +291,32 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tv_revenue_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:letterSpacing="0.1"
-                    android:text="VUES AUJOURD'HUI"
+                    android:text="CHIFFRE D'AFFAIRES"
                     android:textColor="#FFCDD2"
                     android:textSize="10sp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/tv_views_today"
+                    android:id="@+id/tv_total_revenue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:fontFamily="serif"
-                    android:text="1,842"
+                    android:text="0.00 €"
                     android:textColor="#FFFFFF"
                     android:textSize="36sp"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tv_orders_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="↑ Pic à 12h45"
+                    android:text="0 commandes aujourd'hui"
                     android:textColor="#FFCDD2"
                     android:textSize="12sp" />
             </LinearLayout>
