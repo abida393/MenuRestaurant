@@ -32,7 +32,8 @@ data class Dish(
     val badgeType: String? = null,
     val isFavorite: Boolean = false,
     val isChefSpecialty: Boolean = false,
-    val prixPromo: Double? = null
+    val prixPromo: Double? = null,
+    val isValidatedByAdmin: Boolean = false
 ) {
     /** Alias demandé par le métier : spécialité du chef. */
     val isChefSpecial: Boolean get() = isChefSpecialty

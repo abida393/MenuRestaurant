@@ -8,6 +8,7 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.savoria.app.data.local.converter.Converters
+import com.savoria.app.data.local.dao.CartDao
 import com.savoria.app.data.local.dao.CategoryDao
 import com.savoria.app.data.local.dao.ChefOrderDao
 import com.savoria.app.data.local.dao.DishDao
@@ -16,6 +17,7 @@ import com.savoria.app.data.local.dao.ReservationDao
 import com.savoria.app.data.local.dao.ShiftDao
 import com.savoria.app.data.local.dao.TableDao
 import com.savoria.app.data.local.dao.UserDao
+import com.savoria.app.data.local.entity.CartItemEntity
 import com.savoria.app.data.local.entity.Category
 import com.savoria.app.data.local.entity.ChefOrder
 import com.savoria.app.data.local.entity.Dish
@@ -37,9 +39,10 @@ import kotlinx.coroutines.launch
         Reservation::class,
         OrderEntity::class,
         OrderItem::class,
-        ChefOrder::class
+        ChefOrder::class,
+        CartItemEntity::class
     ],
-    version = 5,
+    version = 7,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -50,6 +53,7 @@ abstract class SavoriaDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
     abstract fun orderDao(): OrderDao
     abstract fun chefOrderDao(): ChefOrderDao
+    abstract fun cartDao(): CartDao
     abstract fun tableDao(): TableDao
     abstract fun reservationDao(): ReservationDao
     abstract fun shiftDao(): ShiftDao
@@ -125,6 +129,50 @@ abstract class SavoriaDatabase : RoomDatabase() {
                                 """.trimIndent()
                             )
                         }
+                    },
+                    object : Migration(6, 7) {
+                        override fun migrate(database: SupportSQLiteDatabase) {
+                            database.execSQL(
+                                "ALTER TABLE dishes ADD COLUMN isValidatedByAdmin INTEGER NOT NULL DEFAULT 0"
+                            )
+                            database.execSQL("UPDATE dishes SET isValidatedByAdmin = 1")
+                            database.execSQL("ALTER TABLE orders ADD COLUMN excuseMessage TEXT")
+                        }
+                    },
+                    object : Migration(5, 6) {
+                        override fun migrate(database: SupportSQLiteDatabase) {
+                            database.execSQL(
+                                """
+                                CREATE TABLE IF NOT EXISTS cart_items (
+                                    id TEXT NOT NULL PRIMARY KEY,
+                                    dishId TEXT NOT NULL,
+                                    nom TEXT NOT NULL,
+                                    prix REAL NOT NULL,
+                                    quantite INTEGER NOT NULL,
+                                    sessionId TEXT NOT NULL
+                                )
+                                """.trimIndent()
+                            )
+                            database.execSQL(
+                                "ALTER TABLE orders ADD COLUMN consommationMode TEXT NOT NULL DEFAULT 'SUR_PLACE'"
+                            )
+                            database.execSQL(
+                                "ALTER TABLE orders ADD COLUMN clientSessionId TEXT NOT NULL DEFAULT ''"
+                            )
+                            database.execSQL("UPDATE orders SET statut = 'EN_ATTENTE' WHERE statut = 'RECUE'")
+                            database.execSQL("UPDATE orders SET statut = 'EN_PREPARATION' WHERE statut = 'EN_CUISINE'")
+                            database.execSQL("UPDATE orders SET statut = 'PRET' WHERE statut = 'PRETE'")
+                            database.execSQL("UPDATE orders SET statut = 'SERVI' WHERE statut = 'SERVIE'")
+                            database.execSQL(
+                                "ALTER TABLE chef_orders ADD COLUMN orderId TEXT NOT NULL DEFAULT ''"
+                            )
+                            database.execSQL(
+                                "CREATE INDEX IF NOT EXISTS index_chef_orders_orderId ON chef_orders(orderId)"
+                            )
+                            database.execSQL(
+                                "CREATE INDEX IF NOT EXISTS index_orders_clientSessionId ON orders(clientSessionId)"
+                            )
+                        }
                     }
                 )
                 .build()
@@ -180,7 +228,8 @@ abstract class SavoriaDatabase : RoomDatabase() {
                     badgeType = "red_small",
                     photoUrl = "dish_wellington",
                     disponible = true,
-                    isFavorite = true
+                    isFavorite = true,
+                    isValidatedByAdmin = true
                 ),
                 Dish(
                     nom = "Saint-Jacques Hokkaido",
@@ -193,7 +242,8 @@ abstract class SavoriaDatabase : RoomDatabase() {
                     photoUrl = "dish_scallops",
                     disponible = true,
                     isFavorite = false,
-                    isChefSpecialty = true
+                    isChefSpecialty = true,
+                    isValidatedByAdmin = true
                 ),
                 Dish(
                     nom = "Pappardelle aux Champignons Sauvages",
@@ -205,7 +255,8 @@ abstract class SavoriaDatabase : RoomDatabase() {
                     badgeType = null,
                     photoUrl = "dish_pappardelle",
                     disponible = true,
-                    isFavorite = true
+                    isFavorite = true,
+                    isValidatedByAdmin = true
                 ),
                 Dish(
                     nom = "Sphère de Lave Valrhona",
@@ -217,7 +268,8 @@ abstract class SavoriaDatabase : RoomDatabase() {
                     badgeType = "red_small",
                     photoUrl = "dish_lava_sphere",
                     disponible = true,
-                    isFavorite = true
+                    isFavorite = true,
+                    isValidatedByAdmin = true
                 ),
                 Dish(
                     nom = "Caprese Burrata Héritage",
@@ -229,7 +281,8 @@ abstract class SavoriaDatabase : RoomDatabase() {
                     badgeType = null,
                     photoUrl = "dish_burrata",
                     disponible = true,
-                    isFavorite = true
+                    isFavorite = true,
+                    isValidatedByAdmin = true
                 ),
                 Dish(
                     nom = "Agneau aux Herbes de Provence",
@@ -242,7 +295,8 @@ abstract class SavoriaDatabase : RoomDatabase() {
                     photoUrl = "dish_lamb",
                     disponible = true,
                     isFavorite = false,
-                    isChefSpecialty = true
+                    isChefSpecialty = true,
+                    isValidatedByAdmin = true
                 )
             )
             dishes.forEach { dishDao.insertDish(it) }

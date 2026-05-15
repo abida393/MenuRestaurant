@@ -9,33 +9,71 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.savoria.app.data.local.entity.OrderEntity
 import com.savoria.app.data.local.entity.OrderItem
+import com.savoria.app.data.local.entity.OrderStatus
 import com.savoria.app.data.local.relation.OrderWithItems
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface OrderDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrder(order: OrderEntity): Unit
+    suspend fun insertOrder(order: OrderEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrderItems(items: List<OrderItem>): Unit
+    suspend fun insertOrderItems(items: List<OrderItem>)
 
     @Update
-    suspend fun updateOrder(order: OrderEntity): Unit
+    suspend fun updateOrder(order: OrderEntity)
 
     @Delete
-    suspend fun deleteOrder(order: OrderEntity): Unit
+    suspend fun deleteOrder(order: OrderEntity)
 
     @Query("SELECT * FROM orders WHERE id = :orderId")
     suspend fun getOrderById(orderId: String): OrderEntity?
+
+    @Query("UPDATE orders SET statut = :status WHERE id = :orderId")
+    suspend fun updateOrderStatus(orderId: String, status: OrderStatus)
+
+    @Query("UPDATE orders SET excuseMessage = :message WHERE id = :orderId")
+    suspend fun updateExcuse(orderId: String, message: String)
+
+    @Query("SELECT COUNT(*) FROM orders WHERE statut = 'SERVI'")
+    fun countCompletedOrders(): Flow<Int>
 
     @Transaction
     @Query("SELECT * FROM orders ORDER BY creeLe DESC")
     fun getAllOrdersWithItems(): Flow<List<OrderWithItems>>
 
     @Transaction
-    @Query("SELECT * FROM orders WHERE statut IN ('RECUE','EN_CUISINE') ORDER BY creeLe ASC")
-    fun getPendingOrdersWithItems(): Flow<List<OrderWithItems>>
+    @Query(
+        """
+        SELECT * FROM orders 
+        WHERE statut != 'SERVI' 
+        ORDER BY creeLe ASC
+        """
+    )
+    fun getActiveKitchenOrdersWithItems(): Flow<List<OrderWithItems>>
+
+    @Query("SELECT COUNT(*) FROM orders WHERE statut = 'EN_ATTENTE'")
+    fun countWaitingOrders(): Flow<Int>
+
+    @Query(
+        """
+        SELECT COALESCE(SUM(total), 0) FROM orders 
+        WHERE creeLe >= :dayStartMillis
+        """
+    )
+    fun todayRevenue(dayStartMillis: Long): Flow<Double>
+
+    @Transaction
+    @Query(
+        """
+        SELECT * FROM orders 
+        WHERE clientSessionId = :sessionId 
+        AND statut != 'SERVI' 
+        ORDER BY creeLe DESC
+        """
+    )
+    fun getActiveOrdersForSession(sessionId: String): Flow<List<OrderWithItems>>
 
     @Transaction
     @Query("SELECT * FROM orders WHERE id = :orderId")

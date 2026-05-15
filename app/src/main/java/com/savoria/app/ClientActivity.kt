@@ -1,9 +1,14 @@
 package com.savoria.app
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
@@ -15,11 +20,21 @@ import com.savoria.app.ui.admin.login.LoginActivity
 
 class ClientActivity : AppCompatActivity() {
 
+    companion object {
+        const val EXTRA_NAVIGATE_TO_MENU = "navigate_to_menu"
+    }
+
     private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navController: NavController
+
+    private val requestNotificationPermission = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { /* optional: user may deny */ }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_client)
+        requestNotificationPermissionIfNeeded()
 
         drawerLayout = findViewById(R.id.drawer_layout)
 
@@ -27,9 +42,13 @@ class ClientActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.client_nav_host_fragment) as NavHostFragment
 
-        val navController: NavController = navHostFragment.navController
+        navController = navHostFragment.navController
         val bottomNav: BottomNavigationView = findViewById(R.id.client_bottom_nav)
         bottomNav.setupWithNavController(navController)
+
+        if (intent.getBooleanExtra(EXTRA_NAVIGATE_TO_MENU, false)) {
+            navController.navigate(R.id.navigation_menu_client)
+        }
 
         val navView: NavigationView = findViewById(R.id.nav_view)
         navView.setNavigationItemSelectedListener { menuItem ->
@@ -46,7 +65,27 @@ class ClientActivity : AppCompatActivity() {
         }
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (intent.getBooleanExtra(EXTRA_NAVIGATE_TO_MENU, false)) {
+            navController.navigate(R.id.navigation_menu_client)
+        }
+    }
+
     fun openDrawer() {
         drawerLayout.openDrawer(GravityCompat.START)
+    }
+
+    private fun requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+        requestNotificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
 }

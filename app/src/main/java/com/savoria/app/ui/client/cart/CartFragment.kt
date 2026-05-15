@@ -6,80 +6,132 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.savoria.app.R
+import com.savoria.app.data.local.entity.CartItemEntity
+import com.savoria.app.data.local.entity.ConsumptionMode
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class CartFragment : Fragment() {
 
-    private lateinit var cartViewModel: CartViewModel
+    private val cartViewModel: CartViewModel by activityViewModels()
     private lateinit var cartContainer: LinearLayout
+    private lateinit var tvSubtotal: TextView
+    private lateinit var tvTax: TextView
     private lateinit var tvTotal: TextView
+    private lateinit var tvMode: TextView
     private lateinit var btnOrder: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_cart, container, false)
-    }
+    ): View? = inflater.inflate(R.layout.fragment_cart, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        cartViewModel = ViewModelProvider(requireActivity())[CartViewModel::class.java]
         cartContainer = view.findViewById(R.id.ll_cart_items)
+        tvSubtotal = view.findViewById(R.id.tv_cart_subtotal)
+        tvTax = view.findViewById(R.id.tv_cart_tax)
         tvTotal = view.findViewById(R.id.tv_cart_total)
+        tvMode = view.findViewById(R.id.tv_cart_mode)
         btnOrder = view.findViewById(R.id.btn_order)
 
         btnOrder.setOnClickListener {
-            cartViewModel.placeOrder()
-            Toast.makeText(context, "Commande placée avec succès !", Toast.LENGTH_SHORT).show()
+            if (cartViewModel.cartItems.value.isEmpty()) return@setOnClickListener
+            CheckoutBottomSheet().apply {
+                onConfirmed = { /* handled via orderPlaced flow */ }
+            }.show(childFragmentManager, CheckoutBottomSheet.TAG)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            cartViewModel.cartItems.collect { items ->
-                populateCart(items)
-                tvTotal.text = "Total: ${String.format("%.2f €", cartViewModel.total)}"
+            cartViewModel.cartItems.collect { populateCart(it) }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            cartViewModel.invoice.collect { inv ->
+                tvSubtotal.text = String.format(Locale.FRANCE, "%.2f €", inv.subtotal)
+                tvTax.text = String.format(Locale.FRANCE, "%.2f €", inv.tax)
+                tvTotal.text = String.format(Locale.FRANCE, "%.2f €", inv.total)
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            cartViewModel.consumptionMode.collect { mode ->
+                tvMode.text = when (mode) {
+                    ConsumptionMode.SUR_PLACE -> "Mode : Sur place"
+                    ConsumptionMode.EMPORTER -> "Mode : À emporter"
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            cartViewModel.orderPlaced.collect { event ->
+                event ?: return@collect
+                showSuccessAndReceipt(event)
+                cartViewModel.clearOrderPlacedEvent()
+                findNavController().navigate(R.id.navigation_suivi)
             }
         }
     }
 
-    private fun populateCart(items: List<CartItem>) {
-        if (!::cartContainer.isInitialized) return
+    private fun populateCart(items: List<CartItemEntity>) {
         cartContainer.removeAllViews()
-        val inflater = LayoutInflater.from(context)
-
+        val inflater = LayoutInflater.from(requireContext())
         if (items.isEmpty()) {
-            val emptyView = TextView(context).apply {
+            cartContainer.addView(TextView(requireContext()).apply {
                 text = "Votre panier est vide"
-                textSize = 16f
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                ).apply { setMargins(24, 24, 24, 24) }
-            }
-            cartContainer.addView(emptyView)
+                setPadding(0, 24, 0, 24)
+            })
             return
         }
-
-        for (cartItem in items) {
-            val item = inflater.inflate(R.layout.item_cart_dish, cartContainer, false)
-
-            item.findViewById<TextView>(R.id.tv_cart_dish_name).text = cartItem.dish.nom
-            item.findViewById<TextView>(R.id.tv_cart_dish_price).text = cartItem.dish.prixFormat
-            item.findViewById<TextView>(R.id.tv_cart_dish_quantity).text = "Qty: ${cartItem.quantity}"
-
-            item.findViewById<TextView>(R.id.btn_remove_cart_item).setOnClickListener {
-                cartViewModel.removeFromCart(cartItem.dish)
-                Toast.makeText(context, "${cartItem.dish.nom} retiré du panier", Toast.LENGTH_SHORT).show()
+        for (item in items) {
+            val row = inflater.inflate(R.layout.item_cart_dish, cartContainer, false)
+            row.findViewById<TextView>(R.id.tv_cart_dish_name).text = item.nom
+            row.findViewById<TextView>(R.id.tv_cart_dish_price).text =
+                String.format(Locale.FRANCE, "%.2f €", item.prix)
+            row.findViewById<TextView>(R.id.tv_cart_dish_quantity).text = "Qté : ${item.quantite}"
+            row.findViewById<TextView>(R.id.btn_remove_cart_item).setOnClickListener {
+                cartViewModel.removeFromCart(item)
             }
-
-            cartContainer.addView(item)
+            cartContainer.addView(row)
         }
+    }
+
+    private fun showSuccessAndReceipt(event: OrderPlacedEvent) {
+        val root = requireView()
+        Snackbar.make(root, "✓ Commande confirmée avec succès !", Snackbar.LENGTH_LONG)
+            .setBackgroundTint(0xFFA02020.toInt())
+            .setTextColor(0xFFFFFFFF.toInt())
+            .show()
+
+        val lines = event.lines.joinToString("\n") {
+            "• ${it.nom} × ${it.quantite}"
+        }
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Reçu numérique")
+            .setMessage(
+                """
+                Commande #${event.order.id.take(6).uppercase()}
+                ${if (event.order.consommationMode.name == "SUR_PLACE") "Sur place" else "À emporter"}
+                
+                $lines
+                
+                Sous-total : ${String.format(Locale.FRANCE, "%.2f €", event.invoice.subtotal)}
+                TVA (10%) : ${String.format(Locale.FRANCE, "%.2f €", event.invoice.tax)}
+                Total : ${String.format(Locale.FRANCE, "%.2f €", event.invoice.total)}
+                
+                Merci pour votre confiance — Savoria
+                """.trimIndent()
+            )
+            .setPositiveButton("Voir le suivi", null)
+            .show()
     }
 }

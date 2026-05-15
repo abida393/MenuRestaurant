@@ -9,7 +9,11 @@
         android:icon="@android:drawable/ic_menu_sort_by_size"
         android:title="Menu" />
     <item
-        android:id="@+id/navigation_favorites"
-        android:icon="@android:drawable/star_on"
-        android:title="Favoris" />
+        android:id="@+id/navigation_suivi"
+        android:icon="@android:drawable/ic_menu_recent_history"
+        android:title="Suivi" />
+    <item
+        android:id="@+id/navigation_cart"
+        android:icon="@android:drawable/ic_menu_view"
+        android:title="Panier" />
 </menu>

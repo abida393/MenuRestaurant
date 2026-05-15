@@ -10,6 +10,10 @@ class DishRepository(private val dishDao: DishDao) {
 
     val availableDishes: Flow<List<Dish>> = dishDao.getAvailableDishes()
 
+    val chefDishes: Flow<List<Dish>> = dishDao.getAllDishesForChef()
+
+    val pendingValidationCount: Flow<Int> = dishDao.countPendingValidation()
+
     val favoriteDishes: Flow<List<Dish>> = dishDao.getFavoriteDishes()
 
     suspend fun insert(dish: Dish) = dishDao.insertDish(dish)

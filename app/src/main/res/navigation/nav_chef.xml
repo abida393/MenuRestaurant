@@ -3,15 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_chef"
-    app:startDestination="@id/navigation_chef_orders">
+    app:startDestination="@id/navigation_chef_dashboard">
 
     <fragment
         android:id="@+id/navigation_chef_dashboard"
-        android:name="com.savoria.app.ui.admin.dashboard.DashboardFragment"
+        android:name="com.savoria.app.ui.chef.ChefDashboardFragment"
         android:label="Tableau de bord"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_chef_dashboard">
+        <action
+            android:id="@+id/action_dashboard_to_plats"
+            app:destination="@id/navigation_chef_plats" />
+    </fragment>
 
-    <!-- Chef Orders — main destination -->
+    <fragment
+        android:id="@+id/navigation_chef_plats"
+        android:name="com.savoria.app.ui.chef.ChefPlatsFragment"
+        android:label="Mes plats"
+        tools:layout="@layout/fragment_chef_plats" />
+
     <fragment
         android:id="@+id/navigation_chef_orders"
         android:name="com.savoria.app.ui.chef.ChefOrdersFragment"

@@ -218,6 +218,7 @@
 
                 <!-- Card 1 -->
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/card_mains"
                     android:layout_width="0dp"
                     android:layout_height="100dp"
                     android:layout_weight="1"
@@ -252,6 +253,7 @@
 
                 <!-- Card 2 -->
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/card_specialties"
                     android:layout_width="0dp"
                     android:layout_height="100dp"
                     android:layout_weight="1"
@@ -293,6 +295,7 @@
 
                 <!-- Card 3 -->
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/card_seafood"
                     android:layout_width="0dp"
                     android:layout_height="100dp"
                     android:layout_weight="1"
@@ -327,6 +330,7 @@
 
                 <!-- Card 4 -->
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/card_desserts"
                     android:layout_width="0dp"
                     android:layout_height="100dp"
                     android:layout_weight="1"

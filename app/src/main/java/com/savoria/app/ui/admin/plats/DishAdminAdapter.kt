@@ -21,7 +21,10 @@ class DishAdminAdapter(
         fun bind(dish: Dish) {
             binding.textName.text = dish.nom
             binding.textPrice.text = "%.2f €".format(dish.prix)
-            binding.textCategory.text = dish.categoryId ?: "Sans catégorie"
+            binding.textCategory.text = buildString {
+                append(dish.categoryId ?: "Sans catégorie")
+                if (!dish.isValidatedByAdmin) append(" • En attente de validation")
+            }
             binding.textAvailability.text =
                 if (dish.disponible) "✅ Disponible" else "❌ Indisponible"
 

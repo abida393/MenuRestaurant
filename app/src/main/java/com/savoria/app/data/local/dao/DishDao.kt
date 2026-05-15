@@ -19,9 +19,21 @@ interface DishDao {
     @Query("SELECT * FROM dishes ORDER BY nom ASC")
     suspend fun getAllDishesOnce(): List<Dish>
 
-    // Récupère seulement les plats disponibles pour le CLIENT
-    @Query("SELECT * FROM dishes WHERE disponible = 1 ORDER BY nom ASC")
+    // Plats visibles côté client (validés par l'admin)
+    @Query(
+        """
+        SELECT * FROM dishes 
+        WHERE disponible = 1 AND isValidatedByAdmin = 1 
+        ORDER BY nom ASC
+        """
+    )
     fun getAvailableDishes(): Flow<List<Dish>>
+
+    @Query("SELECT COUNT(*) FROM dishes WHERE isValidatedByAdmin = 0")
+    fun countPendingValidation(): Flow<Int>
+
+    @Query("SELECT * FROM dishes ORDER BY nom ASC")
+    fun getAllDishesForChef(): Flow<List<Dish>>
 
     @Query("SELECT * FROM dishes WHERE id = :dishId")
     suspend fun getDishById(dishId: String): Dish?

@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.savoria.app.ChefActivity
 import com.savoria.app.R
 import com.savoria.app.SavoriaApplication
 import com.savoria.app.ui.viewmodel.AdminViewModel
@@ -37,18 +36,11 @@ class DashboardFragment : Fragment() {
         val tvUnavailable = view.findViewById<TextView>(R.id.tv_active_promos)
         val popularContainer = view.findViewById<LinearLayout>(R.id.ll_popular_dishes)
 
-        val isChefMode = requireActivity() is ChefActivity
-        if (isChefMode) {
-            view.findViewById<View>(R.id.btn_add_dish).visibility = View.GONE
-            view.findViewById<View>(R.id.btn_manage_categories).visibility = View.GONE
-            view.findViewById<View>(R.id.tv_view_all).visibility = View.GONE
-        } else {
-            view.findViewById<View>(R.id.btn_add_dish).setOnClickListener {
-                findNavController().navigate(R.id.action_dashboard_to_add_dish)
-            }
-            view.findViewById<View>(R.id.tv_view_all).setOnClickListener {
-                findNavController().navigate(R.id.navigation_plats)
-            }
+        view.findViewById<View>(R.id.btn_add_dish).setOnClickListener {
+            findNavController().navigate(R.id.action_dashboard_to_add_dish)
+        }
+        view.findViewById<View>(R.id.tv_view_all).setOnClickListener {
+            findNavController().navigate(R.id.navigation_plats)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -73,6 +65,7 @@ class DashboardFragment : Fragment() {
                             buildString {
                                 append(dish.categoryId ?: "Sans catégorie")
                                 if (dish.isChefSpecial) append(" • Spécialité du chef")
+                                if (!dish.isValidatedByAdmin) append(" • En attente de validation")
                             }
                         item.findViewById<TextView>(R.id.tv_dish_price).text =
                             dish.prixFormat.ifBlank { "%.2f €".format(dish.prix) }

@@ -1,24 +1,66 @@
 package com.savoria.app.data.repository
 
 import com.savoria.app.data.local.dao.ChefOrderDao
+import com.savoria.app.data.local.dao.OrderDao
 import com.savoria.app.data.local.entity.ChefOrder
 import com.savoria.app.data.local.entity.ChefOrderStatus
+import com.savoria.app.data.local.entity.OrderStatus
+import com.savoria.app.data.local.relation.OrderWithItems
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 
-class OrderRepository(private val chefOrderDao: ChefOrderDao) {
+data class ChefKitchenStats(
+    val pendingCount: Int = 0,
+    val completedOrdersCount: Int = 0
+)
 
-    val activeOrders: Flow<List<ChefOrder>> = chefOrderDao.getActiveOrders()
+data class KitchenOrderCard(
+    val order: OrderWithItems,
+    val itemLines: List<String>
+)
 
-    suspend fun insert(order: ChefOrder) = chefOrderDao.insert(order)
+class OrderRepository(
+    private val chefOrderDao: ChefOrderDao,
+    private val orderDao: OrderDao
+) {
+    val activeKitchenOrders: Flow<List<OrderWithItems>> =
+        orderDao.getActiveKitchenOrdersWithItems()
 
-    suspend fun insertAll(orders: List<ChefOrder>) = chefOrderDao.insertAll(orders)
+    val chefOrderLines: Flow<List<ChefOrder>> = chefOrderDao.getAllChefOrders()
 
-    suspend fun advanceStatus(order: ChefOrder) {
-        val next = when (order.status) {
-            ChefOrderStatus.PENDING -> ChefOrderStatus.PREPARING
-            ChefOrderStatus.PREPARING -> ChefOrderStatus.READY
-            ChefOrderStatus.READY -> ChefOrderStatus.READY
+    val kitchenOrderCards: Flow<List<KitchenOrderCard>> = combine(
+        activeKitchenOrders,
+        chefOrderLines
+    ) { orders, lines ->
+        val linesByOrder = lines.groupBy { it.orderId }
+        orders.map { orderWithItems ->
+            val descriptions = linesByOrder[orderWithItems.order.id]?.map { line ->
+                "• ${line.quantity}× ${line.dishName}"
+            } ?: orderWithItems.items.map { item ->
+                "• ${item.quantite}× article"
+            }
+            KitchenOrderCard(orderWithItems, descriptions)
         }
-        chefOrderDao.updateStatus(order.id, next)
+    }
+
+    val kitchenStats: Flow<ChefKitchenStats> = combine(
+        orderDao.countWaitingOrders(),
+        orderDao.countCompletedOrders()
+    ) { pending, completed ->
+        ChefKitchenStats(pendingCount = pending, completedOrdersCount = completed)
+    }
+
+    suspend fun startPreparation(orderId: String) {
+        orderDao.updateOrderStatus(orderId, OrderStatus.EN_PREPARATION)
+        chefOrderDao.updateStatusByParentOrder(orderId, ChefOrderStatus.PREPARING)
+    }
+
+    suspend fun markReady(orderId: String) {
+        orderDao.updateOrderStatus(orderId, OrderStatus.PRET)
+        chefOrderDao.updateStatusByParentOrder(orderId, ChefOrderStatus.READY)
+    }
+
+    suspend fun sendExcuse(orderId: String, excuseMessage: String) {
+        orderDao.updateExcuse(orderId, excuseMessage)
     }
 }

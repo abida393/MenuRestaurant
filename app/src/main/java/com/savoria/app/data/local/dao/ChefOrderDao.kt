@@ -29,4 +29,13 @@ interface ChefOrderDao {
 
     @Query("UPDATE chef_orders SET status = :status WHERE id = :orderId")
     suspend fun updateStatus(orderId: String, status: ChefOrderStatus)
+
+    @Query("SELECT * FROM chef_orders WHERE orderId = :parentOrderId")
+    suspend fun getByParentOrder(parentOrderId: String): List<ChefOrder>
+
+    @Query("SELECT * FROM chef_orders ORDER BY timestamp ASC")
+    fun getAllChefOrders(): Flow<List<ChefOrder>>
+
+    @Query("UPDATE chef_orders SET status = :status WHERE orderId = :parentOrderId")
+    suspend fun updateStatusByParentOrder(parentOrderId: String, status: ChefOrderStatus)
 }

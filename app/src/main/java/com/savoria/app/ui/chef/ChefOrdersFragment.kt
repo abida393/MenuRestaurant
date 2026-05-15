@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import android.widget.Toast
 import com.savoria.app.R
 import kotlinx.coroutines.launch
 
@@ -30,7 +31,16 @@ class ChefOrdersFragment : Fragment() {
         val recycler = view.findViewById<RecyclerView>(R.id.recyclerOrders)
         val emptyView = view.findViewById<TextView>(R.id.tvEmptyOrders)
 
-        adapter = OrderAdapter { order -> viewModel.advanceStatus(order) }
+        adapter = OrderAdapter(
+            onStartPreparation = { orderId -> viewModel.startPreparation(orderId) },
+            onMarkReady = { orderId -> viewModel.markReady(orderId) },
+            onSendExcuse = { orderId ->
+                ExcuseBottomSheet.newInstance { excuse ->
+                    viewModel.sendExcuse(orderId, excuse)
+                    Toast.makeText(requireContext(), R.string.excuse_sent, Toast.LENGTH_SHORT).show()
+                }.show(childFragmentManager, ExcuseBottomSheet.TAG)
+            }
+        )
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = adapter
 

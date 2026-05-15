@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.savoria.app.SavoriaApplication
-import com.savoria.app.data.local.entity.ChefOrder
+import com.savoria.app.data.repository.KitchenOrderCard
 import com.savoria.app.data.repository.OrderRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -16,19 +16,18 @@ class ChefOrdersViewModel(application: Application) : AndroidViewModel(applicati
     private val orderRepository: OrderRepository =
         (application as SavoriaApplication).orderRepository
 
-    val orders: StateFlow<List<ChefOrder>> = orderRepository.activeOrders
+    val orders: StateFlow<List<KitchenOrderCard>> = orderRepository.kitchenOrderCards
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    init {
-        viewModelScope.launch {
-            val db = (application as SavoriaApplication).database
-            com.savoria.app.data.local.OrderSeeder.seedSampleChefOrders(db)
-        }
+    fun startPreparation(orderId: String) {
+        viewModelScope.launch { orderRepository.startPreparation(orderId) }
     }
 
-    fun advanceStatus(order: ChefOrder) {
-        viewModelScope.launch {
-            orderRepository.advanceStatus(order)
-        }
+    fun markReady(orderId: String) {
+        viewModelScope.launch { orderRepository.markReady(orderId) }
+    }
+
+    fun sendExcuse(orderId: String, excuse: String) {
+        viewModelScope.launch { orderRepository.sendExcuse(orderId, excuse) }
     }
 }

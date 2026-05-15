@@ -14,6 +14,7 @@ import com.savoria.app.MainActivity
 import com.savoria.app.R
 import com.savoria.app.SavoriaApplication
 import com.savoria.app.data.local.SavoriaDatabase
+import com.savoria.app.data.local.StaffSessionManager
 import com.savoria.app.data.local.UserSeeder
 import com.savoria.app.data.local.entity.UserRole
 import kotlinx.coroutines.launch
@@ -95,6 +96,11 @@ class LoginActivity : AppCompatActivity() {
                 }
                 else -> {
                     tvError.visibility = View.GONE
+                    StaffSessionManager.saveSession(
+                        this@LoginActivity,
+                        user.id,
+                        user.role.name
+                    )
                     val intent = when (user.role) {
                         UserRole.ADMIN -> Intent(this@LoginActivity, MainActivity::class.java)
                         UserRole.CHEF, UserRole.SERVEUR ->

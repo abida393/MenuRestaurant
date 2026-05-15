@@ -7,48 +7,43 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.savoria.app.R
+import com.savoria.app.data.local.entity.Dish
 import com.savoria.app.ui.SharedDishViewModel
 import com.savoria.app.ui.client.cart.CartViewModel
-import com.savoria.app.data.local.entity.Dish
-import kotlinx.coroutines.cancel
+import com.savoria.app.ui.client.cart.ConsumptionModeBottomSheet
 import kotlinx.coroutines.launch
 import java.util.UUID
 
 class DishDetailFragment : Fragment() {
 
+    private val cartViewModel: CartViewModel by activityViewModels()
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_dish_detail, container, false)
-    }
+    ): View? = inflater.inflate(R.layout.fragment_dish_detail, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Bind top bar events
         view.findViewById<View>(R.id.iv_back).setOnClickListener {
-            if (parentFragmentManager.backStackEntryCount > 0) {
-                parentFragmentManager.popBackStack()
-            }
+            findNavController().navigateUp()
         }
 
-        // Get arguments
-        val title = arguments?.getString("title") ?: "Côte de Bœuf\nBraisée"
-        val price = arguments?.getString("price") ?: "42,00 €"
-        val description = arguments?.getString("description") ?: "Notre côte de bœuf Angus cuite lentement pendant 48 heures, nappée d'une réduction de Cabernet Sauvignon. Servi sur une polenta de maïs héritage veloutée, garni d'oignons grelots rôtis et de gremolata fraîche."
+        val title = arguments?.getString("title") ?: "Plat"
+        val price = arguments?.getString("price") ?: "0,00 €"
+        val description = arguments?.getString("description").orEmpty()
         val imageRes = arguments?.getInt("imageRes", 0) ?: 0
 
-        val viewModel = ViewModelProvider(requireActivity())[SharedDishViewModel::class.java]
-        val currentTitle = arguments?.getString("title") ?: ""
-
-        // Populate views
         view.findViewById<TextView>(R.id.tv_detail_title).text = title
         view.findViewById<TextView>(R.id.tv_detail_price).text = price
         view.findViewById<TextView>(R.id.tv_detail_description).text = description
@@ -56,51 +51,71 @@ class DishDetailFragment : Fragment() {
             view.findViewById<ImageView>(R.id.iv_hero_image).setImageResource(imageRes)
         }
 
-        val btnAddToSelection = view.findViewById<TextView>(R.id.btn_add_to_selection)
-        btnAddToSelection.text = "AJOUTER À LA SÉLECTION — $price   "
+        val btnAdd = view.findViewById<TextView>(R.id.btn_add_to_selection)
+        btnAdd.text = "AJOUTER À LA SÉLECTION — $price   "
 
-        // Add to Selection Action — using CartViewModel
-        val cartViewModel = ViewModelProvider(requireActivity())[CartViewModel::class.java]
-        btnAddToSelection.setOnClickListener {
-            val currentDish = Dish(
-                id = arguments?.getString("dishId") ?: UUID.randomUUID().toString(),
-                nom = title,
-                categoryId = null,
-                prix = arguments?.getDouble("prixRaw") ?: 0.0,
-                prixFormat = price,
-                description = description,
-                photoUrl = "",
-                disponible = true
-            )
-            cartViewModel.addToCart(currentDish)
-            Toast.makeText(context, "$title ajouté au panier", Toast.LENGTH_SHORT).show()
+        val dish = Dish(
+            id = arguments?.getString("dishId") ?: UUID.randomUUID().toString(),
+            nom = title,
+            categoryId = null,
+            prix = arguments?.getDouble("prixRaw") ?: 0.0,
+            prixFormat = price,
+            description = description,
+            photoUrl = "",
+            disponible = true
+        )
+
+        btnAdd.setOnClickListener {
+            val sheet = ConsumptionModeBottomSheet.newInstance(dish)
+            sheet.onModeSelected = { mode, selected ->
+                cartViewModel.addToCart(selected, mode)
+                Snackbar.make(view, "✓ ${selected.nom} ajouté au panier", Snackbar.LENGTH_LONG)
+                    .setBackgroundTint(0xFFA02020.toInt())
+                    .setTextColor(0xFFFFFFFF.toInt())
+                    .setAction("Panier") {
+                        findNavController().navigate(R.id.navigation_cart)
+                    }
+                    .show()
+            }
+            sheet.show(childFragmentManager, "consumption_mode")
         }
 
-        // Populate Similar Dishes from database
-        val similarDishesContainer: LinearLayout = view.findViewById(R.id.ll_similar_dishes)
+        loadSimilarDishes(view, title)
+    }
+
+    private fun loadSimilarDishes(view: View, currentTitle: String) {
+        val viewModel = ViewModelProvider(requireActivity())[SharedDishViewModel::class.java]
+        val container: LinearLayout = view.findViewById(R.id.ll_similar_dishes)
         val inflater = LayoutInflater.from(context)
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.allDishes.collect { allDishes ->
-                similarDishesContainer.removeAllViews()
-                val similar = allDishes.filter { it.nom != currentTitle }.take(3)
-                for (dish in similar) {
-                    val itemView = inflater.inflate(R.layout.item_similar_dish, similarDishesContainer, false)
+                container.removeAllViews()
+                allDishes
+                    .filter { it.disponible && it.isValidatedByAdmin && it.nom != currentTitle }
+                    .take(3)
+                    .forEach { dish ->
+                    val itemView = inflater.inflate(R.layout.item_similar_dish, container, false)
                     itemView.findViewById<TextView>(R.id.tv_title).text = dish.nom
                     itemView.findViewById<TextView>(R.id.tv_price).text = dish.prixFormat
+                    val imageResId = resources.getIdentifier(
+                        dish.photoUrl, "drawable", requireContext().packageName
+                    )
                     itemView.setOnClickListener {
-                        val bundle = Bundle().apply {
-                            putString("title", dish.nom)
-                            putString("price", dish.prixFormat)
-                            putString("description", dish.description)
-                            putInt("imageRes", 0)
-                        }
-                        findNavController().navigate(R.id.action_detail_pop)
-                        findNavController().navigate(R.id.navigation_dish_detail, bundle)
+                        findNavController().navigate(
+                            R.id.navigation_dish_detail,
+                            bundleOf(
+                                "dishId" to dish.id,
+                                "title" to dish.nom,
+                                "price" to dish.prixFormat,
+                                "prixRaw" to dish.prix,
+                                "description" to dish.description,
+                                "imageRes" to imageResId
+                            )
+                        )
                     }
-                    similarDishesContainer.addView(itemView)
+                    container.addView(itemView)
                 }
-                this.cancel()
             }
         }
     }

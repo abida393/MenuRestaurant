@@ -1,13 +1,17 @@
 package com.savoria.app.data.local.entity
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.util.UUID
 
-/** Commande cuisine (une ligne = un plat commandé). */
-@Entity(tableName = "chef_orders")
+@Entity(
+    tableName = "chef_orders",
+    indices = [Index("orderId")]
+)
 data class ChefOrder(
     @PrimaryKey val id: String = UUID.randomUUID().toString(),
+    val orderId: String,
     val dishId: String,
     val dishName: String,
     val quantity: Int,
@@ -17,5 +21,11 @@ data class ChefOrder(
 )
 
 enum class ChefOrderStatus {
-    PENDING, PREPARING, READY
+    PENDING, PREPARING, READY;
+
+    fun toOrderStatus(): OrderStatus = when (this) {
+        PENDING -> OrderStatus.EN_ATTENTE
+        PREPARING -> OrderStatus.EN_PREPARATION
+        READY -> OrderStatus.PRET
+    }
 }

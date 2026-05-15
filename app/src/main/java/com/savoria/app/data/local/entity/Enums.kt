@@ -8,8 +8,28 @@ enum class ShiftType {
     JOUR, NUIT
 }
 
+/** Statut commande client / cuisine unifié. */
 enum class OrderStatus {
-    RECUE, EN_CUISINE, PRETE, SERVIE
+    EN_ATTENTE,
+    EN_PREPARATION,
+    PRET,
+    SERVI;
+
+    companion object {
+        /** Compatibilité migration anciennes valeurs Room. */
+        fun fromLegacy(value: String): OrderStatus = when (value) {
+            "RECUE" -> EN_ATTENTE
+            "EN_CUISINE" -> EN_PREPARATION
+            "PRETE" -> PRET
+            "SERVIE" -> SERVI
+            else -> enumValueOf(value)
+        }
+    }
+}
+
+enum class ConsumptionMode {
+    SUR_PLACE,
+    EMPORTER
 }
 
 enum class OrderItemStatus {

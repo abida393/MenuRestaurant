@@ -22,13 +22,16 @@ import java.util.UUID
             onDelete = ForeignKey.SET_NULL
         )
     ],
-    indices = [Index("serveurId"), Index("tableId")]
+    indices = [Index("serveurId"), Index("tableId"), Index("clientSessionId")]
 )
 data class OrderEntity(
     @PrimaryKey val id: String = UUID.randomUUID().toString(),
-    val serveurId: String?,
-    val tableId: String?,
-    val statut: OrderStatus,
+    val serveurId: String? = null,
+    val tableId: String? = null,
+    val statut: OrderStatus = OrderStatus.EN_ATTENTE,
+    val consommationMode: ConsumptionMode = ConsumptionMode.SUR_PLACE,
+    val clientSessionId: String,
     val total: Double,
-    val creeLe: Long
+    val creeLe: Long = System.currentTimeMillis(),
+    val excuseMessage: String? = null
 )
