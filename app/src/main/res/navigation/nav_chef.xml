@@ -5,6 +5,12 @@
     android:id="@+id/nav_chef"
     app:startDestination="@id/navigation_chef_orders">
 
+    <fragment
+        android:id="@+id/navigation_chef_dashboard"
+        android:name="com.savoria.app.ui.admin.dashboard.DashboardFragment"
+        android:label="Tableau de bord"
+        tools:layout="@layout/fragment_dashboard" />
+
     <!-- Chef Orders — main destination -->
     <fragment
         android:id="@+id/navigation_chef_orders"

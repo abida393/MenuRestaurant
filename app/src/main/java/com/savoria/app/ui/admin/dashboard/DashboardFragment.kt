@@ -6,74 +6,90 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.savoria.app.ChefActivity
 import com.savoria.app.R
+import com.savoria.app.SavoriaApplication
+import com.savoria.app.ui.viewmodel.AdminViewModel
+import com.savoria.app.ui.viewmodel.ViewModelFactory
+import kotlinx.coroutines.launch
 
 class DashboardFragment : Fragment() {
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_dashboard, container, false)
+    private val viewModel: AdminViewModel by activityViewModels {
+        ViewModelFactory((requireActivity().application as SavoriaApplication).dishRepository)
     }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? = inflater.inflate(R.layout.fragment_dashboard, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Navigate to Add Dish screen
-        view.findViewById<View>(R.id.btn_add_dish).setOnClickListener {
-            findNavController().navigate(R.id.action_dashboard_to_add_dish)
-        }
+        val tvTotal = view.findViewById<TextView>(R.id.tv_total_dishes)
+        val tvSpecialties = view.findViewById<TextView>(R.id.tv_total_categories)
+        val tvUnavailable = view.findViewById<TextView>(R.id.tv_active_promos)
+        val popularContainer = view.findViewById<LinearLayout>(R.id.ll_popular_dishes)
 
-        view.findViewById<View>(R.id.btn_manage_categories).setOnClickListener {
-            Toast.makeText(context, "Manage Categories — coming soon", Toast.LENGTH_SHORT).show()
-        }
-
-        view.findViewById<View>(R.id.tv_view_all).setOnClickListener {
-            Toast.makeText(context, "Full Inventory — coming soon", Toast.LENGTH_SHORT).show()
-        }
-
-        view.findViewById<View>(R.id.btn_view_promos).setOnClickListener {
-            Toast.makeText(context, "Promotions — coming soon", Toast.LENGTH_SHORT).show()
-        }
-
-        // Populate popular dishes with mock data
-        populateMockDishes(view)
-    }
-
-    private fun populateMockDishes(root: View) {
-        val container: LinearLayout = root.findViewById(R.id.ll_popular_dishes)
-        val inflater = LayoutInflater.from(context)
-
-        val dishes = arrayOf(
-            arrayOf("Signature Beef Tartare", "Appetizers • 42 orders today", "$24.00", "IN"),
-            arrayOf("Wild Atlantic Salmon", "Main Courses • 38 orders today", "$38.00", "LOW"),
-            arrayOf("Black Truffle Tagliatelle", "Main Courses • 55 orders today", "$45.00", "IN")
-        )
-
-        for (dish in dishes) {
-            val item = inflater.inflate(R.layout.item_popular_dish, container, false)
-
-            item.findViewById<TextView>(R.id.tv_dish_name).text = dish[0]
-            item.findViewById<TextView>(R.id.tv_dish_meta).text = dish[1]
-            item.findViewById<TextView>(R.id.tv_dish_price).text = dish[2]
-
-            val badge = item.findViewById<TextView>(R.id.tv_stock_badge)
-            if ("IN" == dish[3]) {
-                badge.text = "IN STOCK"
-                badge.setBackgroundResource(R.drawable.bg_badge_green)
-                badge.setTextColor(0xFF22A060.toInt())
-            } else {
-                badge.text = "LOW STOCK"
-                badge.setBackgroundResource(R.drawable.bg_badge_red)
-                badge.setTextColor(0xFFC0392B.toInt())
+        val isChefMode = requireActivity() is ChefActivity
+        if (isChefMode) {
+            view.findViewById<View>(R.id.btn_add_dish).visibility = View.GONE
+            view.findViewById<View>(R.id.btn_manage_categories).visibility = View.GONE
+            view.findViewById<View>(R.id.tv_view_all).visibility = View.GONE
+        } else {
+            view.findViewById<View>(R.id.btn_add_dish).setOnClickListener {
+                findNavController().navigate(R.id.action_dashboard_to_add_dish)
             }
+            view.findViewById<View>(R.id.tv_view_all).setOnClickListener {
+                findNavController().navigate(R.id.navigation_plats)
+            }
+        }
 
-            container.addView(item)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.dashboardStats.collect { stats ->
+                tvTotal.text = stats.totalDishes.toString()
+                tvSpecialties.text = stats.chefSpecialties.toString()
+                tvUnavailable.text = stats.unavailableDishes.toString()
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.allDishes.collect { dishes ->
+                popularContainer.removeAllViews()
+                val inflater = LayoutInflater.from(requireContext())
+                dishes
+                    .sortedByDescending { it.isChefSpecialty }
+                    .take(3)
+                    .forEach { dish ->
+                        val item = inflater.inflate(R.layout.item_popular_dish, popularContainer, false)
+                        item.findViewById<TextView>(R.id.tv_dish_name).text = dish.nom
+                        item.findViewById<TextView>(R.id.tv_dish_meta).text =
+                            buildString {
+                                append(dish.categoryId ?: "Sans catégorie")
+                                if (dish.isChefSpecial) append(" • Spécialité du chef")
+                            }
+                        item.findViewById<TextView>(R.id.tv_dish_price).text =
+                            dish.prixFormat.ifBlank { "%.2f €".format(dish.prix) }
+
+                        val badge = item.findViewById<TextView>(R.id.tv_stock_badge)
+                        if (dish.disponible) {
+                            badge.text = "DISPONIBLE"
+                            badge.setBackgroundResource(R.drawable.bg_badge_green)
+                            badge.setTextColor(0xFF22A060.toInt())
+                        } else {
+                            badge.text = "INDISPONIBLE"
+                            badge.setBackgroundResource(R.drawable.bg_badge_red)
+                            badge.setTextColor(0xFFC0392B.toInt())
+                        }
+                        popularContainer.addView(item)
+                    }
+            }
         }
     }
 }
-

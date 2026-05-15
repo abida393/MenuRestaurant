@@ -9,6 +9,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.savoria.app.data.local.converter.Converters
 import com.savoria.app.data.local.dao.CategoryDao
+import com.savoria.app.data.local.dao.ChefOrderDao
 import com.savoria.app.data.local.dao.DishDao
 import com.savoria.app.data.local.dao.OrderDao
 import com.savoria.app.data.local.dao.ReservationDao
@@ -16,6 +17,7 @@ import com.savoria.app.data.local.dao.ShiftDao
 import com.savoria.app.data.local.dao.TableDao
 import com.savoria.app.data.local.dao.UserDao
 import com.savoria.app.data.local.entity.Category
+import com.savoria.app.data.local.entity.ChefOrder
 import com.savoria.app.data.local.entity.Dish
 import com.savoria.app.data.local.entity.OrderEntity
 import com.savoria.app.data.local.entity.OrderItem
@@ -23,7 +25,6 @@ import com.savoria.app.data.local.entity.Reservation
 import com.savoria.app.data.local.entity.Shift
 import com.savoria.app.data.local.entity.TableEntity
 import com.savoria.app.data.local.entity.User
-import com.savoria.app.data.local.entity.UserRole
 import kotlinx.coroutines.launch
 
 @Database(
@@ -35,9 +36,10 @@ import kotlinx.coroutines.launch
         TableEntity::class,
         Reservation::class,
         OrderEntity::class,
-        OrderItem::class
+        OrderItem::class,
+        ChefOrder::class
     ],
-    version = 3,
+    version = 5,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -47,6 +49,7 @@ abstract class SavoriaDatabase : RoomDatabase() {
     abstract fun dishDao(): DishDao
     abstract fun categoryDao(): CategoryDao
     abstract fun orderDao(): OrderDao
+    abstract fun chefOrderDao(): ChefOrderDao
     abstract fun tableDao(): TableDao
     abstract fun reservationDao(): ReservationDao
     abstract fun shiftDao(): ShiftDao
@@ -63,7 +66,8 @@ abstract class SavoriaDatabase : RoomDatabase() {
                     "savoria_database"
                 )
                 .addCallback(DatabaseCallback(scope))
-                .addMigrations(object : Migration(2, 3) {
+                .addMigrations(
+                    object : Migration(2, 3) {
                     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("ALTER TABLE dishes ADD COLUMN badgeType TEXT")
                         database.execSQL("UPDATE dishes SET badgeType = NULL")
@@ -94,7 +98,35 @@ abstract class SavoriaDatabase : RoomDatabase() {
                         database.execSQL("ALTER TABLE dishes_new RENAME TO dishes")
                         database.execSQL("CREATE INDEX index_dishes_categoryId ON dishes(categoryId)")
                     }
-                })
+                },
+                    object : Migration(3, 4) {
+                        override fun migrate(database: SupportSQLiteDatabase) {
+                            database.execSQL(
+                                "ALTER TABLE dishes ADD COLUMN isChefSpecialty INTEGER NOT NULL DEFAULT 0"
+                            )
+                            database.execSQL(
+                                "UPDATE dishes SET isChefSpecialty = 1 WHERE badgeText = 'SPÉCIAL'"
+                            )
+                        }
+                    },
+                    object : Migration(4, 5) {
+                        override fun migrate(database: SupportSQLiteDatabase) {
+                            database.execSQL(
+                                """
+                                CREATE TABLE IF NOT EXISTS chef_orders (
+                                    id TEXT NOT NULL PRIMARY KEY,
+                                    dishId TEXT NOT NULL,
+                                    dishName TEXT NOT NULL,
+                                    quantity INTEGER NOT NULL,
+                                    price REAL NOT NULL,
+                                    status TEXT NOT NULL,
+                                    timestamp INTEGER NOT NULL
+                                )
+                                """.trimIndent()
+                            )
+                        }
+                    }
+                )
                 .build()
                 INSTANCE = instance
                 instance
@@ -109,7 +141,19 @@ abstract class SavoriaDatabase : RoomDatabase() {
             super.onCreate(db)
             INSTANCE?.let { database ->
                 scope.launch {
+                    UserSeeder.ensureDefaultUsers(database.userDao())
                     populateDatabase(database)
+                    OrderSeeder.seedSampleChefOrders(database)
+                }
+            }
+        }
+
+        override fun onOpen(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+            super.onOpen(db)
+            INSTANCE?.let { database ->
+                scope.launch {
+                    UserSeeder.ensureDefaultUsers(database.userDao())
+                    OrderSeeder.seedSampleChefOrders(database)
                 }
             }
         }
@@ -117,21 +161,6 @@ abstract class SavoriaDatabase : RoomDatabase() {
         suspend fun populateDatabase(database: SavoriaDatabase) {
             val categoryDao = database.categoryDao()
             val dishDao = database.dishDao()
-            val userDao = database.userDao()
-
-            // Seed Admin User
-            userDao.insertUser(
-                User(
-                    nom = "Administrateur",
-                    email = "admin@savoria.com",
-                    password = java.security.MessageDigest.getInstance("SHA-256")
-                        .digest("admin123".toByteArray())
-                        .joinToString("") { "%02x".format(it) },
-                    role = UserRole.ADMIN,
-                    actif = true
-                )
-            )
-
             val categories = listOf(
                 Category(id = "Mains", nom = "Plats Principaux", ordreAffichage = 1),
                 Category(id = "Seafood", nom = "Fruits de Mer", ordreAffichage = 2),
@@ -163,7 +192,8 @@ abstract class SavoriaDatabase : RoomDatabase() {
                     badgeType = "blue_small",
                     photoUrl = "dish_scallops",
                     disponible = true,
-                    isFavorite = false
+                    isFavorite = false,
+                    isChefSpecialty = true
                 ),
                 Dish(
                     nom = "Pappardelle aux Champignons Sauvages",
@@ -211,10 +241,16 @@ abstract class SavoriaDatabase : RoomDatabase() {
                     badgeType = "blue_small",
                     photoUrl = "dish_lamb",
                     disponible = true,
-                    isFavorite = false
+                    isFavorite = false,
+                    isChefSpecialty = true
                 )
             )
             dishes.forEach { dishDao.insertDish(it) }
+        }
+
+        /** Insère des commandes de démo — appelable depuis les tests ou le debug. */
+        suspend fun seedSampleChefOrders(database: SavoriaDatabase) {
+            OrderSeeder.seedSampleChefOrders(database)
         }
     }
 }

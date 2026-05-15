@@ -53,7 +53,7 @@
         android:textColor="#A02020"
         android:clickable="true"
         android:focusable="true"
-        android:paddingStartCompat="8dp"
-        android:paddingEndCompat="8dp" />
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp" />
 
 </LinearLayout>

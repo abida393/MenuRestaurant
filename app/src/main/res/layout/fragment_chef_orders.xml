@@ -9,22 +9,31 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Commandes en Attente"
+        android:text="Commandes Reçues"
         android:textSize="24sp"
         android:textStyle="bold"
         android:textColor="@android:color/black"
         android:paddingBottom="16dp" />
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/ll_orders_container"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerOrders"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:layout_height="match_parent"
+            android:clipToPadding="false" />
 
-    </ScrollView>
+        <TextView
+            android:id="@+id/tvEmptyOrders"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Aucune commande en attente"
+            android:textColor="#666666"
+            android:textSize="16sp"
+            android:visibility="gone" />
+    </FrameLayout>
 
 </LinearLayout>

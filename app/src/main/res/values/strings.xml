@@ -29,4 +29,12 @@
     <string name="contact_system_administrator">Contacter l\'administrateur système</string>
     <string name="recover_password">RÉCUPÉRER LE MOT DE PASSE</string>
     <string name="savoria_admin">Administrateur Savoria</string>
+
+    <!-- Login -->
+    <string name="login_email_required">Email requis</string>
+    <string name="login_password_required">Mot de passe requis</string>
+    <string name="login_error_invalid">Identifiants incorrects. Vérifiez l\'email et le mot de passe.</string>
+    <string name="login_error_inactive">Ce compte est désactivé. Contactez l\'administrateur.</string>
+    <string name="login_recover_hint">Contactez l\'administrateur pour réinitialiser votre accès.</string>
+    <string name="login_demo_accounts">Comptes de démo :\n• Admin : admin@savoria.com / admin123\n• Chef : chef@savoria.com / chef123\n• Serveur : serveur@savoria.com / serveur123</string>
 </resources>

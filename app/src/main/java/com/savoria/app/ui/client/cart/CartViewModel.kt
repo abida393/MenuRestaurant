@@ -5,6 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.savoria.app.SavoriaApplication
 import com.savoria.app.data.local.SavoriaDatabase
+import com.savoria.app.data.local.entity.ChefOrder
+import com.savoria.app.data.local.entity.ChefOrderStatus
 import com.savoria.app.data.local.entity.Dish
 import com.savoria.app.data.local.entity.OrderEntity
 import com.savoria.app.data.local.entity.OrderItem
@@ -66,6 +68,19 @@ class CartViewModel(application: Application) : AndroidViewModel(application) {
                 )
             }
             db.orderDao().insertOrderItems(orderItems)
+
+            val chefOrders = items.map { cartItem ->
+                ChefOrder(
+                    dishId = cartItem.dish.id,
+                    dishName = cartItem.dish.nom,
+                    quantity = cartItem.quantity,
+                    price = cartItem.dish.prix,
+                    status = ChefOrderStatus.PENDING,
+                    timestamp = System.currentTimeMillis()
+                )
+            }
+            db.chefOrderDao().insertAll(chefOrders)
+
             clearCart()
         }
     }

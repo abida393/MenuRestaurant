@@ -27,15 +27,11 @@
             android:layout_marginBottom="24dp"
             android:background="@drawable/bg_divider_red" />
 
-        <!-- Placeholder message -->
-        <TextView
+        <LinearLayout
+            android:id="@+id/ll_category_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingVertical="48dp"
-            android:text="Category management coming soon"
-            android:textColor="#999990"
-            android:textSize="15sp" />
+            android:orientation="vertical" />
 
     </LinearLayout>
 

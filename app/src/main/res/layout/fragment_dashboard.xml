@@ -149,7 +149,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:fontFamily="serif"
-                    android:text="124"
+                    android:text="0"
                     android:textColor="#A02020"
                     android:textSize="36sp"
                     android:textStyle="bold" />
@@ -190,7 +190,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:letterSpacing="0.1"
-                    android:text="CATÉGORIES"
+                    android:text="SPÉCIALITÉS DU CHEF"
                     android:textColor="#999990"
                     android:textSize="10sp"
                     android:textStyle="bold" />
@@ -201,7 +201,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:fontFamily="serif"
-                    android:text="12"
+                    android:text="0"
                     android:textColor="#A02020"
                     android:textSize="36sp"
                     android:textStyle="bold" />
@@ -210,7 +210,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Sur 2 saisons/menus"
+                    android:text="Plats signature du chef"
                     android:textColor="#999990"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -242,7 +242,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:letterSpacing="0.1"
-                    android:text="PROMOS ACTIVES"
+                    android:text="PLATS INDISPONIBLES"
                     android:textColor="#999990"
                     android:textSize="10sp"
                     android:textStyle="bold" />
@@ -253,7 +253,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:fontFamily="serif"
-                    android:text="03"
+                    android:text="0"
                     android:textColor="#A02020"
                     android:textSize="36sp"
                     android:textStyle="bold" />
@@ -262,7 +262,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="❤ 2 expirant ce soir"
+                    android:text="Hors service pour les clients"
                     android:textColor="#C0392B"
                     android:textSize="12sp" />
             </LinearLayout>

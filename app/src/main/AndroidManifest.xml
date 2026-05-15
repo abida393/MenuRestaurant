@@ -41,7 +41,10 @@
             android:name="com.savoria.app.MainActivity"
             android:exported="false" />
 
-        <activity android:name=".ChefActivity" android:theme="@style/Theme.Savoria.NoActionBar" />
+        <activity
+            android:name=".ChefActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Savoria.NoActionBar" />
 
     </application>
 

@@ -19,16 +19,21 @@ import java.util.UUID
     indices = [Index("categoryId")]
 )
 data class Dish(
-    @PrimaryKey val id: String = UUID.randomUUID().toString(),
+    @PrimaryKey
+    val id: String = UUID.randomUUID().toString(),
     val categoryId: String?,
     val nom: String,
     val description: String = "",
     val prix: Double,
     val prixFormat: String = "",
     val photoUrl: String,
-    val disponible: Boolean,
+    val disponible: Boolean = true,
     val badgeText: String? = null,
     val badgeType: String? = null,
     val isFavorite: Boolean = false,
+    val isChefSpecialty: Boolean = false,
     val prixPromo: Double? = null
-)
+) {
+    /** Alias demandé par le métier : spécialité du chef. */
+    val isChefSpecial: Boolean get() = isChefSpecialty
+}

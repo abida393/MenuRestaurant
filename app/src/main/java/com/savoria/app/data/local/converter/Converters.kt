@@ -1,6 +1,7 @@
 package com.savoria.app.data.local.converter
 
 import androidx.room.TypeConverter
+import com.savoria.app.data.local.entity.ChefOrderStatus
 import com.savoria.app.data.local.entity.OrderItemStatus
 import com.savoria.app.data.local.entity.OrderStatus
 import com.savoria.app.data.local.entity.ReservationStatus
@@ -70,4 +71,10 @@ class Converters {
 
     @TypeConverter
     fun fromReservationStatus(value: ReservationStatus) = value.name
+
+    @TypeConverter
+    fun toChefOrderStatus(value: String) = enumValueOf<ChefOrderStatus>(value)
+
+    @TypeConverter
+    fun fromChefOrderStatus(value: ChefOrderStatus) = value.name
 }

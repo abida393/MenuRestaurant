@@ -37,7 +37,7 @@ class SharedDishViewModel(application: Application) : AndroidViewModel(applicati
 
     fun loadAllDishes() {
         viewModelScope.launch {
-            repository.getAllDishes().collect { dishes ->
+            repository.allDishes.collect { dishes ->
                 _allDishes.value = dishes
             }
         }
@@ -45,7 +45,7 @@ class SharedDishViewModel(application: Application) : AndroidViewModel(applicati
 
     fun loadFavoriteDishes() {
         viewModelScope.launch {
-            repository.getFavoriteDishes().collect { dishes ->
+            repository.favoriteDishes.collect { dishes ->
                 _favoriteDishes.value = dishes
             }
         }
