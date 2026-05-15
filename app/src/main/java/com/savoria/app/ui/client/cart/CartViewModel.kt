@@ -4,69 +4,102 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.savoria.app.SavoriaApplication
-import com.savoria.app.data.local.SavoriaDatabase
+import com.savoria.app.data.local.ClientSessionManager
+import com.savoria.app.data.local.entity.CartItemEntity
+import com.savoria.app.data.local.entity.ConsumptionMode
 import com.savoria.app.data.local.entity.Dish
 import com.savoria.app.data.local.entity.OrderEntity
-import com.savoria.app.data.local.entity.OrderItem
-import com.savoria.app.data.local.entity.OrderItemStatus
-import com.savoria.app.data.local.entity.OrderStatus
+import com.savoria.app.data.repository.CartLine
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-data class CartItem(val dish: Dish, val quantity: Int)
+data class CartInvoice(
+    val subtotal: Double = 0.0,
+    val tax: Double = 0.0,
+    val total: Double = 0.0,
+    val itemCount: Int = 0
+)
+
+data class OrderPlacedEvent(
+    val order: OrderEntity,
+    val invoice: CartInvoice,
+    val lines: List<CartItemEntity>
+)
 
 class CartViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _cartItems = MutableStateFlow<List<CartItem>>(emptyList())
-    val cartItems: StateFlow<List<CartItem>> = _cartItems.asStateFlow()
+    private val app = application as SavoriaApplication
+    private val sessionId = ClientSessionManager.getSessionId(application)
 
-    val total get() = _cartItems.value.sumOf { it.dish.prix * it.quantity }
+    val cartItems: StateFlow<List<CartItemEntity>> = app.cartRepository
+        .observeCart(sessionId)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    fun addToCart(dish: Dish) {
-        val current = _cartItems.value.toMutableList()
-        val existing = current.indexOfFirst { it.dish.id == dish.id }
-        if (existing >= 0) {
-            current[existing] = current[existing].copy(quantity = current[existing].quantity + 1)
-        } else {
-            current.add(CartItem(dish, 1))
+    private val _consumptionMode = MutableStateFlow(ConsumptionMode.SUR_PLACE)
+    val consumptionMode: StateFlow<ConsumptionMode> = _consumptionMode.asStateFlow()
+
+    val invoice: StateFlow<CartInvoice> = cartItems
+        .map { items -> buildInvoice(items) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), CartInvoice())
+
+    private val _orderPlaced = MutableStateFlow<OrderPlacedEvent?>(null)
+    val orderPlaced: StateFlow<OrderPlacedEvent?> = _orderPlaced.asStateFlow()
+
+    fun setConsumptionMode(mode: ConsumptionMode) {
+        _consumptionMode.value = mode
+    }
+
+    fun addToCart(dish: Dish, mode: ConsumptionMode) {
+        _consumptionMode.value = mode
+        viewModelScope.launch {
+            app.cartRepository.addItem(sessionId, dish.id, dish.nom, dish.prix)
         }
-        _cartItems.value = current
     }
 
-    fun removeFromCart(dish: Dish) {
-        _cartItems.value = _cartItems.value.filter { it.dish.id != dish.id }
+    fun removeFromCart(item: CartItemEntity) {
+        viewModelScope.launch { app.cartRepository.removeItem(item) }
     }
 
-    fun clearCart() { _cartItems.value = emptyList() }
+    fun clearOrderPlacedEvent() {
+        _orderPlaced.value = null
+    }
 
-    fun placeOrder(tableId: String? = null) {
-        val items = _cartItems.value
+    fun placeOrder() {
+        val items = cartItems.value
         if (items.isEmpty()) return
         viewModelScope.launch {
-            val db = SavoriaDatabase.getDatabase(
-                getApplication(), (getApplication() as SavoriaApplication).applicationScope
+            val inv = buildInvoice(items)
+            val order = app.clientOrderRepository.placeOrder(
+                sessionId = sessionId,
+                mode = _consumptionMode.value,
+                items = items.map {
+                    CartLine(it.dishId, it.nom, it.prix, it.quantite)
+                },
+                subtotal = inv.subtotal,
+                tax = inv.tax
             )
-            val order = OrderEntity(
-                serveurId = null,
-                tableId = tableId,
-                statut = OrderStatus.RECUE,
-                total = total,
-                creeLe = System.currentTimeMillis()
-            )
-            db.orderDao().insertOrder(order)
-            val orderItems = items.map { cartItem ->
-                OrderItem(
-                    orderId = order.id,
-                    dishId = cartItem.dish.id,
-                    quantite = cartItem.quantity,
-                    instructions = "",
-                    statutItem = OrderItemStatus.EN_ATTENTE
-                )
-            }
-            db.orderDao().insertOrderItems(orderItems)
-            clearCart()
+            app.cartRepository.clear(sessionId)
+            _orderPlaced.value = OrderPlacedEvent(order, inv, items)
         }
+    }
+
+    private fun buildInvoice(items: List<CartItemEntity>): CartInvoice {
+        val subtotal = items.sumOf { it.prix * it.quantite }
+        val tax = subtotal * TAX_RATE
+        return CartInvoice(
+            subtotal = subtotal,
+            tax = tax,
+            total = subtotal + tax,
+            itemCount = items.sumOf { it.quantite }
+        )
+    }
+
+    companion object {
+        const val TAX_RATE = 0.10
     }
 }

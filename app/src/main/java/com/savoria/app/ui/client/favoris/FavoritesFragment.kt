@@ -127,12 +127,6 @@ class FavoritesFragment : Fragment() {
                 true
             }
 
-            // Dedicated remove button if layout has one
-            itemView.findViewById<ImageView>(R.id.iv_remove_favorite)?.setOnClickListener {
-                viewModel.toggleFavorite(dish)
-                Toast.makeText(context, "${dish.nom} retiré des favoris", Toast.LENGTH_SHORT).show()
-            }
-
             listContainer.addView(itemView)
         }
     }

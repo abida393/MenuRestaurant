@@ -29,4 +29,36 @@
     <string name="contact_system_administrator">Contacter l\'administrateur système</string>
     <string name="recover_password">RÉCUPÉRER LE MOT DE PASSE</string>
     <string name="savoria_admin">Administrateur Savoria</string>
+
+    <!-- Login -->
+    <string name="login_email_required">Email requis</string>
+    <string name="login_password_required">Mot de passe requis</string>
+    <string name="login_error_invalid">Identifiants incorrects. Vérifiez l\'email et le mot de passe.</string>
+    <string name="login_error_inactive">Ce compte est désactivé. Contactez l\'administrateur.</string>
+    <string name="login_recover_hint">Contactez l\'administrateur pour réinitialiser votre accès.</string>
+    <string name="login_demo_accounts">Comptes de démo :\n• Admin : admin@savoria.com / admin123\n• Chef : chef@savoria.com / chef123\n• Serveur : serveur@savoria.com / serveur123</string>
+
+    <!-- Notifications commande prête -->
+    <string name="notification_channel_orders">Commandes Savoria</string>
+    <string name="notification_channel_orders_desc">Alertes lorsque votre commande est prête</string>
+    <string name="notification_order_ready_title">Commande prête</string>
+    <string name="notification_order_ready_body">Votre commande #%1$s est prête ! Bonne dégustation 🍽️</string>
+
+    <!-- Chef -->
+    <string name="chef_logout">Déconnexion</string>
+    <string name="chef_my_dishes">Mes plats</string>
+    <string name="chef_no_dishes">Aucun plat enregistré</string>
+    <string name="dish_pending_validation">Plat soumis — en attente de validation par l\'admin</string>
+    <string name="btn_send_excuse">Envoyer une excuse</string>
+    <string name="excuse_sheet_title">Choisir une excuse</string>
+    <string name="excuse_ingredient">Ingrédient indisponible</string>
+    <string name="excuse_sold_out">Plat épuisé</string>
+    <string name="excuse_kitchen_error">Erreur de cuisine</string>
+    <string name="excuse_sent">Excuse envoyée au client</string>
+    <string name="back">Retour</string>
+
+    <!-- Notifications excuses -->
+    <string name="notification_channel_excuses">Excuses cuisine</string>
+    <string name="notification_channel_excuses_desc">Messages du chef concernant votre commande</string>
+    <string name="notification_excuse_title">Message du chef — commande #%1$s</string>
 </resources>

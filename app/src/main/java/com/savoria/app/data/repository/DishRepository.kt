@@ -6,20 +6,30 @@ import kotlinx.coroutines.flow.Flow
 
 class DishRepository(private val dishDao: DishDao) {
 
-    fun getAllDishes(): Flow<List<Dish>> = dishDao.getAllDishes()
+    val allDishes: Flow<List<Dish>> = dishDao.getAllDishes()
 
-    fun getFavoriteDishes(): Flow<List<Dish>> = dishDao.getFavoriteDishes()
+    val availableDishes: Flow<List<Dish>> = dishDao.getAvailableDishes()
 
-    suspend fun toggleFavorite(dish: Dish) {
-        val updatedDish = dish.copy(isFavorite = !dish.isFavorite)
-        dishDao.updateDish(updatedDish)
-    }
+    val chefDishes: Flow<List<Dish>> = dishDao.getAllDishesForChef()
 
-    suspend fun insertDish(dish: Dish) {
-        dishDao.insertDish(dish)
-    }
+    val pendingValidationCount: Flow<Int> = dishDao.countPendingValidation()
 
-    suspend fun deleteDish(dish: Dish) {
-        dishDao.deleteDish(dish)
-    }
+    val favoriteDishes: Flow<List<Dish>> = dishDao.getFavoriteDishes()
+
+    suspend fun insert(dish: Dish) = dishDao.insertDish(dish)
+
+    suspend fun update(dish: Dish) = dishDao.updateDish(dish)
+
+    suspend fun delete(dish: Dish) = dishDao.deleteDish(dish)
+
+    suspend fun insertDish(dish: Dish) = insert(dish)
+
+    suspend fun deleteDish(dish: Dish) = delete(dish)
+
+    suspend fun toggleFavorite(dish: Dish) = update(dish.copy(isFavorite = !dish.isFavorite))
+
+    suspend fun setAvailability(dishId: String, available: Boolean) =
+        dishDao.updateAvailability(dishId, available)
+
+    fun getByCategory(categoryId: String) = dishDao.getDishesByCategory(categoryId)
 }

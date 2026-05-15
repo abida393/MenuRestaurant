@@ -4,41 +4,30 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.savoria.app.SavoriaApplication
-import com.savoria.app.data.local.SavoriaDatabase
-import com.savoria.app.data.local.entity.OrderEntity
-import com.savoria.app.data.local.entity.OrderStatus
-import com.savoria.app.data.local.relation.OrderWithItems
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.savoria.app.data.repository.KitchenOrderCard
+import com.savoria.app.data.repository.OrderRepository
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ChefOrdersViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val db = SavoriaDatabase.getDatabase(
-        application, (application as SavoriaApplication).applicationScope
-    )
+    private val orderRepository: OrderRepository =
+        (application as SavoriaApplication).orderRepository
 
-    private val _pendingOrders = MutableStateFlow<List<OrderWithItems>>(emptyList())
-    val pendingOrders: StateFlow<List<OrderWithItems>> = _pendingOrders.asStateFlow()
+    val orders: StateFlow<List<KitchenOrderCard>> = orderRepository.kitchenOrderCards
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    init {
-        viewModelScope.launch {
-            db.orderDao().getPendingOrdersWithItems().collect {
-                _pendingOrders.value = it
-            }
-        }
+    fun startPreparation(orderId: String) {
+        viewModelScope.launch { orderRepository.startPreparation(orderId) }
     }
 
-    fun advanceStatus(order: OrderEntity) {
-        viewModelScope.launch {
-            val next = when (order.statut) {
-                OrderStatus.RECUE       -> OrderStatus.EN_CUISINE
-                OrderStatus.EN_CUISINE  -> OrderStatus.PRETE
-                OrderStatus.PRETE       -> OrderStatus.SERVIE
-                OrderStatus.SERVIE      -> OrderStatus.SERVIE
-            }
-            db.orderDao().updateOrder(order.copy(statut = next))
-        }
+    fun markReady(orderId: String) {
+        viewModelScope.launch { orderRepository.markReady(orderId) }
+    }
+
+    fun sendExcuse(orderId: String, excuse: String) {
+        viewModelScope.launch { orderRepository.sendExcuse(orderId, excuse) }
     }
 }

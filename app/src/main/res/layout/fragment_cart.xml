@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F5F0EB"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -9,10 +10,21 @@
         android:id="@+id/tv_cart_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="serif"
         android:text="Votre Panier"
+        android:textColor="#A02020"
         android:textSize="24sp"
-        android:textStyle="bold"
-        android:paddingBottom="16dp" />
+        android:textStyle="bold|italic"
+        android:paddingBottom="8dp" />
+
+    <TextView
+        android:id="@+id/tv_cart_mode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mode : Sur place"
+        android:textColor="#777770"
+        android:textSize="13sp"
+        android:paddingBottom="12dp" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -24,35 +36,85 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
-
     </ScrollView>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#EEEEEE"
-        android:layout_marginVertical="16dp" />
+        android:background="#E8E0D8"
+        android:layout_marginVertical="12dp" />
 
-    <TextView
-        android:id="@+id/tv_cart_total"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Total: 0,00 €"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:paddingBottom="16dp" />
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Sous-total"
+            android:textColor="#666666" />
+        <TextView
+            android:id="@+id/tv_cart_subtotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0,00 €" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="TVA (10 %)"
+            android:textColor="#666666" />
+        <TextView
+            android:id="@+id/tv_cart_tax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0,00 €" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="serif"
+            android:text="Total"
+            android:textColor="#A02020"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/tv_cart_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="serif"
+            android:text="0,00 €"
+            android:textColor="#A02020"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/btn_order"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:text="COMMANDER"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"
-        android:gravity="center"
+        android:layout_marginTop="16dp"
         android:background="#A02020"
         android:clickable="true"
-        android:focusable="true" />
-
+        android:focusable="true"
+        android:gravity="center"
+        android:text="VOIR LA FACTURE ET COMMANDER"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 </LinearLayout>

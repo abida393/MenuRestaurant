@@ -9,11 +9,28 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- Page header -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="serif"
+            android:text="Categories"
+            android:textColor="#1C1C1A"
+            android:textSize="28sp"
+            android:textStyle="bold|italic" />
+
+        <View
+            android:layout_width="40dp"
+            android:layout_height="3dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/bg_divider_red" />
+
         <LinearLayout
+            android:id="@+id/ll_category_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:orientation="vertical" />
 
             <!-- Page header -->
             <TextView

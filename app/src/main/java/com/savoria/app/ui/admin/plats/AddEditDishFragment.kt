@@ -93,7 +93,7 @@ class AddEditDishFragment : Fragment() {
                             etRegularPrice.setText(dish.prix.toString())
                             etDescription.setText(dish.description)
                             switchAvailable.isChecked = dish.disponible
-                            switchFeatured.isChecked = dish.isFavorite
+                            switchFeatured.isChecked = dish.isChefSpecialty
 
                             val categoryIndex = when (dish.categoryId) {
                                 "Mains"    -> 0
@@ -199,7 +199,10 @@ class AddEditDishFragment : Fragment() {
             description = etDescription.text.toString().trim(),
             photoUrl = selectedImageUri?.toString() ?: "dish_placeholder",
             disponible = switchAvailable.isChecked,
-            isFavorite = switchFeatured.isChecked
+            isFavorite = false,
+            isChefSpecialty = switchFeatured.isChecked,
+            badgeText = if (switchFeatured.isChecked) "SPÉCIAL" else null,
+            badgeType = if (switchFeatured.isChecked) "blue_small" else null
         )
 
         val viewModel = ViewModelProvider(requireActivity())[SharedDishViewModel::class.java]

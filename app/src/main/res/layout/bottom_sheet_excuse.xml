@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet_top_rounded"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/excuse_sheet_title"
+        android:textColor="#1C1C1A"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/excuse_ingredient"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_card_white"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:text="@string/excuse_ingredient"
+        android:textColor="#1C1C1A"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/excuse_sold_out"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_card_white"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:text="@string/excuse_sold_out"
+        android:textColor="#1C1C1A"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/excuse_kitchen_error"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_card_white"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:text="@string/excuse_kitchen_error"
+        android:textColor="#1C1C1A"
+        android:textSize="15sp" />
+</LinearLayout>

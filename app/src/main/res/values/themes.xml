@@ -29,4 +29,6 @@
     </style>
 
     <style name="Theme.RestaurantManager" parent="Base.Theme.RestaurantManager" />
+
+    <style name="Theme.Savoria.NoActionBar" parent="Theme.RestaurantManager" />
 </resources>
