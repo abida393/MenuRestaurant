@@ -38,4 +38,7 @@ interface ChefOrderDao {
 
     @Query("UPDATE chef_orders SET status = :status WHERE orderId = :parentOrderId")
     suspend fun updateStatusByParentOrder(parentOrderId: String, status: ChefOrderStatus)
+
+    @Query("UPDATE chef_orders SET status = 'CANCELLED' WHERE orderId = :parentOrderId")
+    suspend fun cancelByParentOrder(parentOrderId: String)
 }

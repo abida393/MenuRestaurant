@@ -63,8 +63,12 @@ class ChefActivity : AppCompatActivity() {
 
         val navHost = supportFragmentManager
             .findFragmentById(R.id.chef_nav_host_fragment) as NavHostFragment
-        val navController = navHost.navController
-        bottomNav.setupWithNavController(navController)
+        bottomNav.setupWithNavController(navHost.navController)
+    }
+
+    fun logout() {
+        StaffSessionManager.clearSession(this)
+        redirectToLogin()
     }
 
     private fun redirectToLogin() {

@@ -21,11 +21,15 @@ data class ChefOrder(
 )
 
 enum class ChefOrderStatus {
-    PENDING, PREPARING, READY;
+    PENDING,
+    PREPARING,
+    READY,
+    CANCELLED;
 
     fun toOrderStatus(): OrderStatus = when (this) {
         PENDING -> OrderStatus.EN_ATTENTE
         PREPARING -> OrderStatus.EN_PREPARATION
         READY -> OrderStatus.PRET
+        CANCELLED -> OrderStatus.ANNULEE
     }
 }

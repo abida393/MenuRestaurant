@@ -25,23 +25,6 @@
         android:id="@+id/navigation_chef_orders"
         android:name="com.savoria.app.ui.chef.ChefOrdersFragment"
         android:label="Commandes"
-        tools:layout="@layout/fragment_chef_orders" />
-
-    <!-- Chef Menu Management -->
-    <fragment
-        android:id="@+id/navigation_gestion_plats"
-        android:name="com.savoria.app.ui.admin.plats.GestionPlatsFragment"
-        android:label="Gestion du Menu"
-        tools:layout="@layout/fragment_gestion_plats">
-        <action
-            android:id="@+id/action_gestion_to_add"
-            app:destination="@id/navigation_add_dish" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/navigation_add_dish"
-        android:name="com.savoria.app.ui.admin.plats.AddEditDishFragment"
-        android:label="Modifier le Plat"
-        tools:layout="@layout/fragment_add_edit_dish" />
+        tools:layout="@layout/fragment_commandes" />
 
 </navigation>

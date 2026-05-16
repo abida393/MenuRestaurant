@@ -25,10 +25,9 @@ class ChefDishAdapter : ListAdapter<Dish, ChefDishAdapter.Holder>(DIFF) {
                 String.format(Locale.FRANCE, "%.2f €", dish.prix)
             }
             if (dish.isValidatedByAdmin) {
-                badge.text = "Validé"
-                badge.setBackgroundResource(R.drawable.bg_badge_green)
-                badge.setTextColor(Color.parseColor("#22A060"))
+                badge.visibility = View.GONE
             } else {
+                badge.visibility = View.VISIBLE
                 badge.text = "En attente de validation"
                 badge.setBackgroundResource(R.drawable.bg_badge_red)
                 badge.setTextColor(Color.parseColor("#C0392B"))

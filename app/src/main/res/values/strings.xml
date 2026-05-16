@@ -115,6 +115,16 @@
     <string name="excuse_ingredient">Ingrédient indisponible</string>
     <string name="excuse_sold_out">Plat épuisé</string>
     <string name="excuse_kitchen_error">Erreur de cuisine</string>
+    <string name="chef_dashboard_title">Console Chef</string>
+    <string name="chef_stat_served_label">COMMANDES EFFECTUÉES</string>
+    <string name="chef_stat_served_hint">Commandes au statut servi</string>
+    <string name="chef_stat_pending_dishes_label">PLATS EN ATTENTE</string>
+    <string name="chef_stat_pending_dishes_hint">En attente de validation admin</string>
+    <string name="chef_my_dishes_short">Mes plats</string>
+    <string name="chef_btn_start_cooking">Commencer la cuisine</string>
+    <string name="chef_btn_ready">Prêt</string>
+    <string name="chef_orders_title">Commandes</string>
+    <string name="chef_orders_empty">Aucune commande pour le moment</string>
     <string name="excuse_sent">Excuse envoyée au client</string>
     <string name="back">Retour</string>
 

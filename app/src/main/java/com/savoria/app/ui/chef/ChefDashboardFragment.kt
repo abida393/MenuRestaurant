@@ -5,16 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.savoria.app.R
 import com.savoria.app.data.local.StaffSessionManager
 import com.savoria.app.ui.admin.login.LoginActivity
@@ -23,10 +19,7 @@ import kotlinx.coroutines.launch
 
 class ChefDashboardFragment : Fragment() {
 
-    private val dashboardViewModel: ChefDashboardViewModel by viewModels()
-    private val ordersViewModel: ChefOrdersViewModel by viewModels()
-
-    private lateinit var orderAdapter: OrderAdapter
+    private val chefViewModel: ChefViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,27 +30,9 @@ class ChefDashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recycler = view.findViewById<RecyclerView>(R.id.recycler_dashboard_orders)
-        val emptyOrders = view.findViewById<TextView>(R.id.tv_dashboard_orders_empty)
-        val tvCompleted = view.findViewById<TextView>(R.id.tv_completed_orders)
+        val tvServedOrders = view.findViewById<TextView>(R.id.tv_served_orders)
+        val tvPendingDishes = view.findViewById<TextView>(R.id.tv_pending_dishes)
         val pendingBadge = view.findViewById<TextView>(R.id.tv_pending_validation_badge)
-
-        orderAdapter = OrderAdapter(
-            onStartPreparation = { ordersViewModel.startPreparation(it) },
-            onMarkReady = { ordersViewModel.markReady(it) },
-            onSendExcuse = { orderId ->
-                ExcuseBottomSheet.newInstance { excuse ->
-                    ordersViewModel.sendExcuse(orderId, excuse)
-                    Toast.makeText(
-                        requireContext(),
-                        R.string.excuse_sent,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }.show(childFragmentManager, ExcuseBottomSheet.TAG)
-            }
-        )
-        recycler.layoutManager = LinearLayoutManager(requireContext())
-        recycler.adapter = orderAdapter
 
         view.findViewById<ImageView>(R.id.btn_logout).setOnClickListener { logout() }
 
@@ -66,29 +41,24 @@ class ChefDashboardFragment : Fragment() {
                 .show(childFragmentManager, DishDialogFragment.TAG)
         }
 
-        view.findViewById<ImageButton>(R.id.btn_chef_my_dishes).setOnClickListener {
+        view.findViewById<View>(R.id.btn_chef_my_dishes).setOnClickListener {
+            findNavController().navigate(R.id.navigation_chef_plats)
+        }
+        view.findViewById<View>(R.id.card_chef_my_dishes).setOnClickListener {
             findNavController().navigate(R.id.navigation_chef_plats)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            dashboardViewModel.stats.collect { stats ->
-                tvCompleted.text = stats.completedOrdersCount.toString()
+            chefViewModel.dashboardStats.collect { stats ->
+                tvServedOrders.text = stats.servedOrdersCount.toString()
+                tvPendingDishes.text = stats.pendingDishesCount.toString()
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            dashboardViewModel.pendingValidationCount.collect { count ->
+            chefViewModel.pendingValidationCount.collect { count ->
                 pendingBadge.visibility = if (count > 0) View.VISIBLE else View.GONE
-                pendingBadge.text = count.coerceAtMost(9).toString()
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            ordersViewModel.orders.collect { orders ->
-                orderAdapter.submitList(orders)
-                val isEmpty = orders.isEmpty()
-                emptyOrders.visibility = if (isEmpty) View.VISIBLE else View.GONE
-                recycler.visibility = if (isEmpty) View.GONE else View.VISIBLE
+                pendingBadge.text = if (count > 9) "9+" else count.toString()
             }
         }
     }
