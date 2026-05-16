@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/admin_root_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F0EB">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/admin_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/admin_toolbar_title"
+        app:titleTextColor="#1C1C1A" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/admin_nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toTopOf="@id/admin_bottom_nav"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/admin_toolbar"
+        app:navGraph="@navigation/nav_admin" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/admin_bottom_nav"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        app:itemIconTint="@color/nav_item_color"
+        app:itemTextColor="@color/nav_item_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/menu_admin_bottom_nav" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_dish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="72dp"
+        android:backgroundTint="#A02020"
+        android:contentDescription="@string/btn_ajouter_plat"
+        android:src="@android:drawable/ic_input_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="#FFFFFF" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

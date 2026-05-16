@@ -1,7 +1,7 @@
 package com.savoria.app
 
 import android.app.Application
-import com.savoria.app.data.local.SavoriaDatabase
+import com.savoria.app.data.local.database.SavoriaDatabase
 import com.savoria.app.data.repository.CartRepository
 import com.savoria.app.data.repository.ClientOrderRepository
 import com.savoria.app.data.repository.DishRepository

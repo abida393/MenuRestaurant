@@ -11,7 +11,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.savoria.app.R
+import com.savoria.app.ui.common.UiState
+import com.savoria.app.ui.common.bindListLoading
 import kotlinx.coroutines.launch
 
 class SuiviFragment : Fragment() {
@@ -30,6 +33,7 @@ class SuiviFragment : Fragment() {
 
         val recycler = view.findViewById<RecyclerView>(R.id.recycler_suivi)
         val empty = view.findViewById<TextView>(R.id.tv_suivi_empty)
+        val progress = view.findViewById<CircularProgressIndicator>(R.id.progress_suivi)
 
         adapter = SuiviOrderAdapter()
         recycler.layoutManager = LinearLayoutManager(requireContext())
@@ -40,11 +44,27 @@ class SuiviFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.activeOrders.collect { orders ->
-                adapter.submitList(orders)
-                val isEmpty = orders.isEmpty()
-                empty.visibility = if (isEmpty) View.VISIBLE else View.GONE
-                recycler.visibility = if (isEmpty) View.GONE else View.VISIBLE
+            viewModel.activeOrdersState.collect { state ->
+                when (state) {
+                    UiState.Loading -> {
+                        progress.bindListLoading(true)
+                        empty.visibility = View.GONE
+                        recycler.visibility = View.GONE
+                        adapter.submitList(emptyList())
+                    }
+                    UiState.Empty -> {
+                        progress.bindListLoading(false)
+                        adapter.submitList(emptyList())
+                        empty.visibility = View.VISIBLE
+                        recycler.visibility = View.GONE
+                    }
+                    is UiState.Success -> {
+                        progress.bindListLoading(false)
+                        adapter.submitList(state.data)
+                        empty.visibility = View.GONE
+                        recycler.visibility = View.VISIBLE
+                    }
+                }
             }
         }
     }

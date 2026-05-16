@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/serveur_root_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F0EB"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/serveur_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFFFFF"
+        app:title="@string/serveur_toolbar_title"
+        app:titleTextColor="#1C1C1A" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/serveur_fragment_container"
+        android:name="com.savoria.app.ui.serveur.ServeurOrdersFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+</LinearLayout>

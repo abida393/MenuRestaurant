@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="24dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:background="@drawable/bg_promo_gradient">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge_red_small"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="2dp"
+                android:text="RECOMMANDATION DU CHEF"
+                android:textColor="#FFFFFF"
+                android:textSize="9sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:fontFamily="serif"
+                android:text="Risotto\nSafran\ndes Moissons"
+                android:textColor="#FFFFFF"
+                android:textSize="26sp"
+                android:textStyle="bold|italic" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="serif"
+                    android:text="$34.00"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold|italic" />
+
+                <TextView
+                    android:id="@+id/btn_promo_details"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_btn_white_pill"
+                    android:paddingHorizontal="14dp"
+                    android:paddingVertical="7dp"
+                    android:text="VOIR LES DÉTAILS"
+                    android:textColor="#1C1C1A"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+</androidx.cardview.widget.CardView>

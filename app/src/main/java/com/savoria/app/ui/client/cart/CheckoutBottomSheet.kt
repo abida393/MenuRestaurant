@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.savoria.app.R
 import com.savoria.app.data.local.entity.ConsumptionMode
+import com.savoria.app.ui.common.UiState
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -44,7 +45,8 @@ class CheckoutBottomSheet : BottomSheetDialogFragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            cartViewModel.cartItems.collect { items ->
+            cartViewModel.cartItemsState.collect { state ->
+                val items = (state as? UiState.Success)?.data ?: emptyList()
                 linesContainer.removeAllViews()
                 val inflater = LayoutInflater.from(requireContext())
                 items.forEach { item ->

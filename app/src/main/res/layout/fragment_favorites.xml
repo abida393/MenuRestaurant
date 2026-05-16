@@ -110,12 +110,36 @@
                 android:textColor="#555555"
                 android:textSize="12sp" />
 
-            <!-- Favorites List Container -->
-            <LinearLayout
-                android:id="@+id/ll_favorites_list"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                android:minHeight="200dp">
+
+                <LinearLayout
+                    android:id="@+id/ll_favorites_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/progress_favorites"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:indeterminate="true"
+                    android:visibility="gone"
+                    app:indicatorColor="#A02020" />
+
+                <TextView
+                    android:id="@+id/tv_favorites_empty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="24dp"
+                    android:text="@string/favorites_empty"
+                    android:textColor="#777770"
+                    android:visibility="gone" />
+            </FrameLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

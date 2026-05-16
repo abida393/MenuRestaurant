@@ -208,7 +208,7 @@
         android:layout_marginTop="12dp"
         android:gravity="center"
         android:lineSpacingMultiplier="1.3"
-        android:text="@string/login_demo_accounts"
+        android:text="@string/login_staff_credentials_hint"
         android:textColor="#888880"
         android:textSize="11sp" />
 

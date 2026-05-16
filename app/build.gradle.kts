@@ -56,6 +56,8 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.recyclerview)
+
 
     // Room
     implementation(libs.room.runtime)
@@ -65,6 +67,8 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.glide)
+    implementation(libs.androidx.security.crypto)
+    implementation(libs.bcrypt)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

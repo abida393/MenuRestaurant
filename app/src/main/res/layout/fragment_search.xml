@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F0EB"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btn_search_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/back"
+            android:src="@android:drawable/ic_menu_revert"
+            android:padding="8dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="serif"
+            android:gravity="center"
+            android:text="@string/search_title"
+            android:textColor="#A02020"
+            android:textSize="22sp"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/btn_clear_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/search_clear_history"
+            android:textColor="#777770"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_search_white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@android:drawable/ic_menu_search"
+            app:tint="#AAAAAA" />
+
+        <EditText
+            android:id="@+id/et_search_query"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:hint="@string/search_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:textColor="#1C1C1A"
+            android:textColorHint="#CCCCCC"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/recent_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:letterSpacing="0.08"
+            android:text="@string/search_recent"
+            android:textColor="#999990"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/ll_recent_searches"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:letterSpacing="0.08"
+        android:text="@string/search_suggestions"
+        android:textColor="#999990"
+        android:textSize="11sp"
+        android:textStyle="bold" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="24dp">
+
+            <LinearLayout
+                android:id="@+id/ll_search_results"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </androidx.core.widget.NestedScrollView>
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progress_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:indicatorColor="#A02020" />
+    </FrameLayout>
+
+</LinearLayout>

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -61,7 +62,6 @@ class ClientActivity : AppCompatActivity() {
             .findFragmentById(R.id.client_nav_host_fragment) as NavHostFragment
 
         navController = navHostFragment.navController
-        val bottomNav: BottomNavigationView = findViewById(R.id.client_bottom_nav)
         bottomNav.setupWithNavController(navController)
 
         if (intent.getBooleanExtra(EXTRA_NAVIGATE_TO_MENU, false)) {

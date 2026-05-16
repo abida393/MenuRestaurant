@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F0EB"
@@ -26,17 +27,49 @@
         android:textSize="13sp"
         android:paddingBottom="12dp" />
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <LinearLayout
-            android:id="@+id/ll_cart_items"
+        <ScrollView
             android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/ll_cart_items"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progress_cart"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
-    </ScrollView>
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:indicatorColor="#A02020" />
+
+        <TextView
+            android:id="@+id/tv_cart_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.3"
+            android:paddingHorizontal="24dp"
+            android:text="@string/cart_empty"
+            android:textColor="#777770"
+            android:textSize="15sp"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_cart_footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
     <View
         android:layout_width="match_parent"
@@ -117,4 +150,6 @@
         android:textColor="@android:color/white"
         android:textSize="14sp"
         android:textStyle="bold" />
+
+    </LinearLayout>
 </LinearLayout>

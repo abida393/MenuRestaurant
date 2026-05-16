@@ -17,15 +17,22 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.savoria.app.R
 import com.savoria.app.data.local.entity.Dish
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.savoria.app.ui.SharedDishViewModel
+import com.savoria.app.ui.common.UiState
+import com.savoria.app.ui.common.bindListLoading
 import com.savoria.app.ui.util.BadgeUtils
 import com.savoria.app.ui.admin.login.LoginActivity
+import com.savoria.app.ui.util.DishImageLoader
+import com.savoria.app.ui.util.DishImageLoader.toDetailArgs
 import kotlinx.coroutines.launch
 
 class FavoritesFragment : Fragment() {
 
     private lateinit var viewModel: SharedDishViewModel
     private lateinit var listContainer: LinearLayout
+    private lateinit var progressFavorites: CircularProgressIndicator
+    private lateinit var tvFavoritesEmpty: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,6 +45,8 @@ class FavoritesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         listContainer = view.findViewById(R.id.ll_favorites_list)
+        progressFavorites = view.findViewById(R.id.progress_favorites)
+        tvFavoritesEmpty = view.findViewById(R.id.tv_favorites_empty)
         viewModel = ViewModelProvider(requireActivity())[SharedDishViewModel::class.java]
 
         // Admin login button
@@ -51,8 +60,22 @@ class FavoritesFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.favoriteDishes.collect { dishes ->
-                populateFavorites(dishes)
+            viewModel.favoriteDishesState.collect { state ->
+                when (state) {
+                    UiState.Loading -> {
+                        progressFavorites.bindListLoading(true)
+                        tvFavoritesEmpty.visibility = View.GONE
+                        listContainer.removeAllViews()
+                    }
+                    UiState.Empty -> {
+                        progressFavorites.bindListLoading(false)
+                        populateFavorites(emptyList())
+                    }
+                    is UiState.Success -> {
+                        progressFavorites.bindListLoading(false)
+                        populateFavorites(state.data)
+                    }
+                }
             }
         }
     }
@@ -60,6 +83,11 @@ class FavoritesFragment : Fragment() {
     private fun populateFavorites(dishes: List<Dish>) {
         if (!::listContainer.isInitialized) return
         listContainer.removeAllViews()
+        if (dishes.isEmpty()) {
+            tvFavoritesEmpty.visibility = View.VISIBLE
+            return
+        }
+        tvFavoritesEmpty.visibility = View.GONE
         val inflater = LayoutInflater.from(context)
 
         for (dish in dishes) {
@@ -76,10 +104,7 @@ class FavoritesFragment : Fragment() {
             tvDescription.text = dish.description
             tvPrice.text       = dish.prixFormat
             
-            val imageResId = resources.getIdentifier(dish.photoUrl, "drawable", requireContext().packageName)
-            if (imageResId != 0) {
-                ivDishImage.setImageResource(imageResId)
-            }
+            DishImageLoader.load(ivDishImage, dish.photoUrl)
 
             // Category badge styling
             if (dish.badgeText != null) {
@@ -104,13 +129,7 @@ class FavoritesFragment : Fragment() {
             tvAction.setPadding(0, dpToPx(6), 0, dpToPx(6))
 
             val navigateToDetail = {
-                val bundle = Bundle().apply {
-                    putString("title", dish.nom)
-                    putString("price", dish.prixFormat)
-                    putString("description", dish.description)
-                    putInt("imageRes", imageResId)
-                }
-                findNavController().navigate(R.id.action_favorites_to_detail, bundle)
+                findNavController().navigate(R.id.action_favorites_to_detail, dish.toDetailArgs())
             }
 
             tvAction.setOnClickListener { navigateToDetail() }

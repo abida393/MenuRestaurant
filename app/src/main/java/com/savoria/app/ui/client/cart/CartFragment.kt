@@ -11,10 +11,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.savoria.app.R
 import com.savoria.app.data.local.entity.CartItemEntity
 import com.savoria.app.data.local.entity.ConsumptionMode
+import com.savoria.app.ui.common.UiState
+import com.savoria.app.ui.common.bindListLoading
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -27,6 +30,9 @@ class CartFragment : Fragment() {
     private lateinit var tvTotal: TextView
     private lateinit var tvMode: TextView
     private lateinit var btnOrder: TextView
+    private lateinit var tvCartEmpty: TextView
+    private lateinit var layoutCartFooter: View
+    private lateinit var progressCart: CircularProgressIndicator
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,16 +49,38 @@ class CartFragment : Fragment() {
         tvTotal = view.findViewById(R.id.tv_cart_total)
         tvMode = view.findViewById(R.id.tv_cart_mode)
         btnOrder = view.findViewById(R.id.btn_order)
+        tvCartEmpty = view.findViewById(R.id.tv_cart_empty)
+        layoutCartFooter = view.findViewById(R.id.layout_cart_footer)
+        progressCart = view.findViewById(R.id.progress_cart)
 
         btnOrder.setOnClickListener {
-            if (cartViewModel.cartItems.value.isEmpty()) return@setOnClickListener
+            val items = (cartViewModel.cartItemsState.value as? UiState.Success)?.data
+            if (items.isNullOrEmpty()) return@setOnClickListener
             CheckoutBottomSheet().apply {
                 onConfirmed = { /* handled via orderPlaced flow */ }
             }.show(childFragmentManager, CheckoutBottomSheet.TAG)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            cartViewModel.cartItems.collect { populateCart(it) }
+            cartViewModel.cartItemsState.collect { state ->
+                when (state) {
+                    UiState.Loading -> {
+                        progressCart.bindListLoading(true)
+                        tvCartEmpty.visibility = View.GONE
+                        layoutCartFooter.visibility = View.GONE
+                        cartContainer.removeAllViews()
+                        btnOrder.isEnabled = false
+                    }
+                    UiState.Empty -> {
+                        progressCart.bindListLoading(false)
+                        populateCart(emptyList())
+                    }
+                    is UiState.Success -> {
+                        progressCart.bindListLoading(false)
+                        populateCart(state.data)
+                    }
+                }
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -83,15 +111,15 @@ class CartFragment : Fragment() {
     }
 
     private fun populateCart(items: List<CartItemEntity>) {
+        val isEmpty = items.isEmpty()
+        tvCartEmpty.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        layoutCartFooter.visibility = if (isEmpty) View.GONE else View.VISIBLE
+        btnOrder.isEnabled = !isEmpty
+
         cartContainer.removeAllViews()
+        if (isEmpty) return
+
         val inflater = LayoutInflater.from(requireContext())
-        if (items.isEmpty()) {
-            cartContainer.addView(TextView(requireContext()).apply {
-                text = "Votre panier est vide"
-                setPadding(0, 24, 0, 24)
-            })
-            return
-        }
         for (item in items) {
             val row = inflater.inflate(R.layout.item_cart_dish, cartContainer, false)
             row.findViewById<TextView>(R.id.tv_cart_dish_name).text = item.nom

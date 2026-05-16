@@ -17,15 +17,38 @@
             android:text="Gestion du Menu"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:padding="20dp"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="20dp"
             android:textColor="#A02020" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewPlats"
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_dish_filter"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:padding="10dp"/>
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="12dp"
+            app:tabMode="fixed"
+            app:tabGravity="fill" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewPlats"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:padding="10dp" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/progress_plats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminate="true"
+                android:visibility="gone"
+                app:indicatorColor="#A02020" />
+        </FrameLayout>
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

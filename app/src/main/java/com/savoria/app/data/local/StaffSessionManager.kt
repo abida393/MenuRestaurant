@@ -1,6 +1,7 @@
 package com.savoria.app.data.local
 
 import android.content.Context
+import com.savoria.app.data.local.entity.UserRole
 
 object StaffSessionManager {
     private const val PREFS = "savoria_staff_prefs"
@@ -35,4 +36,13 @@ object StaffSessionManager {
     fun getUserRole(context: Context): String? =
         context.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .getString(KEY_USER_ROLE, null)
+
+    fun isAdmin(context: Context): Boolean =
+        isLoggedIn(context) && getUserRole(context) == UserRole.ADMIN.name
+
+    fun isChef(context: Context): Boolean =
+        isLoggedIn(context) && getUserRole(context) == UserRole.CHEF.name
+
+    fun isServeur(context: Context): Boolean =
+        isLoggedIn(context) && getUserRole(context) == UserRole.SERVEUR.name
 }

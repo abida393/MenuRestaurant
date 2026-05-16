@@ -12,17 +12,23 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.savoria.app.R
 import com.savoria.app.SavoriaApplication
-import com.savoria.app.data.local.SavoriaDatabase
 import com.savoria.app.data.local.entity.User
-import com.savoria.app.data.local.entity.UserRole
 import com.savoria.app.util.SecurityUtils
+import com.savoria.app.data.local.entity.UserRole
+import com.savoria.app.ui.viewmodel.AdminViewModel
+import com.savoria.app.ui.viewmodel.AdminViewModelFactory
 import kotlinx.coroutines.launch
 
 class GestionUsersFragment : Fragment() {
+
+    private val viewModel: AdminViewModel by activityViewModels {
+        AdminViewModelFactory(requireActivity().application as SavoriaApplication)
+    }
 
     private lateinit var container: LinearLayout
 
@@ -34,37 +40,26 @@ class GestionUsersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        container = view.findViewById(R.id.ll_user_list)
+        this.container = view.findViewById(R.id.ll_user_list)
 
         view.findViewById<FloatingActionButton>(R.id.fab_add_user).setOnClickListener {
             showAddUserDialog()
         }
 
-        loadUsers()
-    }
-
-    private fun loadUsers() {
         viewLifecycleOwner.lifecycleScope.launch {
-            val db = SavoriaDatabase.getDatabase(
-                requireContext(),
-                (requireActivity().application as SavoriaApplication).applicationScope
-            )
-            val users = db.userDao().getAllUsers()
-            populateUsers(users)
+            viewModel.users.collect { populateUsers(it) }
         }
+        viewModel.refreshUsers()
     }
 
     private fun populateUsers(users: List<User>) {
         container.removeAllViews()
-        val inflater = LayoutInflater.from(context)
+        val inflater = LayoutInflater.from(requireContext())
 
         for (user in users) {
             val itemView = inflater.inflate(android.R.layout.simple_list_item_2, container, false)
-            val text1 = itemView.findViewById<TextView>(android.R.id.text1)
-            val text2 = itemView.findViewById<TextView>(android.R.id.text2)
-
-            text1.text = "${user.nom} (${user.role})"
-            text2.text = user.email
+            itemView.findViewById<TextView>(android.R.id.text1).text = "${user.nom} (${user.role})"
+            itemView.findViewById<TextView>(android.R.id.text2).text = user.email
 
             itemView.setOnLongClickListener {
                 showDeleteConfirm(user)
@@ -72,10 +67,12 @@ class GestionUsersFragment : Fragment() {
             }
 
             container.addView(itemView)
-            
-            // Add divider
-            val div = View(context).apply {
-                layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1)
+
+            val div = View(requireContext()).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    1
+                )
                 setBackgroundColor(0xFFEEEEEE.toInt())
             }
             container.addView(div)
@@ -83,7 +80,7 @@ class GestionUsersFragment : Fragment() {
     }
 
     private fun showAddUserDialog() {
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_add_user, null)
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_user, null)
         val etNom = dialogView.findViewById<EditText>(R.id.et_user_name)
         val etEmail = dialogView.findViewById<EditText>(R.id.et_user_email)
         val etPassword = dialogView.findViewById<EditText>(R.id.et_user_password)
@@ -95,49 +92,36 @@ class GestionUsersFragment : Fragment() {
         spinnerRole.adapter = adapter
 
         AlertDialog.Builder(requireContext())
-            .setTitle("Nouvel Utilisateur")
+            .setTitle(R.string.user_add_title)
             .setView(dialogView)
-            .setPositiveButton("Créer") { _, _ ->
+            .setPositiveButton(R.string.user_add_confirm) { _, _ ->
+                val email = etEmail.text.toString().trim().lowercase()
+                val password = etPassword.text.toString()
+                if (email.isBlank() || password.isBlank()) {
+                    Toast.makeText(requireContext(), R.string.login_error_invalid, Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
                 val user = User(
-                    nom = etNom.text.toString(),
-                    email = etEmail.text.toString(),
-                    password = SecurityUtils.hashPassword(etPassword.text.toString()),
+                    nom = etNom.text.toString().trim(),
+                    email = email,
+                    password = SecurityUtils.hashPassword(password),
                     role = UserRole.valueOf(spinnerRole.selectedItem.toString()),
                     actif = true
                 )
-                saveUser(user)
+                viewModel.addUser(user)
             }
-            .setNegativeButton("Annuler", null)
+            .setNegativeButton(android.R.string.cancel, null)
             .show()
-    }
-
-    private fun saveUser(user: User) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            val db = SavoriaDatabase.getDatabase(
-                requireContext(),
-                (requireActivity().application as SavoriaApplication).applicationScope
-            )
-            db.userDao().insertUser(user)
-            loadUsers()
-            Toast.makeText(context, "Utilisateur créé", Toast.LENGTH_SHORT).show()
-        }
     }
 
     private fun showDeleteConfirm(user: User) {
         AlertDialog.Builder(requireContext())
-            .setTitle("Supprimer")
-            .setMessage("Voulez-vous supprimer l'utilisateur ${user.nom} ?")
-            .setPositiveButton("Supprimer") { _, _ ->
-                viewLifecycleOwner.lifecycleScope.launch {
-                    val db = SavoriaDatabase.getDatabase(
-                        requireContext(),
-                        (requireActivity().application as SavoriaApplication).applicationScope
-                    )
-                    db.userDao().deleteUser(user)
-                    loadUsers()
-                }
+            .setTitle(R.string.user_delete_title)
+            .setMessage(getString(R.string.user_delete_message, user.nom))
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                viewModel.deleteUser(user)
             }
-            .setNegativeButton("Annuler", null)
+            .setNegativeButton(android.R.string.cancel, null)
             .show()
     }
 }

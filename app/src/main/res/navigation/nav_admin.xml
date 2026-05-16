@@ -46,7 +46,13 @@
     <fragment
         android:id="@+id/navigation_add_dish"
         android:name="com.savoria.app.ui.admin.plats.AddEditDishFragment"
-        android:label="Add / Edit Dish"
-        tools:layout="@layout/fragment_add_edit_dish" />
+        android:label="Ajouter / modifier un plat"
+        tools:layout="@layout/fragment_add_edit_dish">
+        <argument
+            android:name="dishId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 
 </navigation>

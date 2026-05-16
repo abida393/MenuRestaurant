@@ -10,6 +10,7 @@ import androidx.room.Update
 import com.savoria.app.data.local.entity.OrderEntity
 import com.savoria.app.data.local.entity.OrderItem
 import com.savoria.app.data.local.entity.OrderStatus
+import com.savoria.app.data.local.model.DishSalesAggregate
 import com.savoria.app.data.local.relation.OrderWithItems
 import kotlinx.coroutines.flow.Flow
 
@@ -53,6 +54,16 @@ interface OrderDao {
     )
     fun getActiveKitchenOrdersWithItems(): Flow<List<OrderWithItems>>
 
+    @Transaction
+    @Query(
+        """
+        SELECT * FROM orders 
+        WHERE statut = 'PRET' 
+        ORDER BY creeLe ASC
+        """
+    )
+    fun getReadyToServeOrdersWithItems(): Flow<List<OrderWithItems>>
+
     @Query("SELECT COUNT(*) FROM orders WHERE statut = 'EN_ATTENTE'")
     fun countWaitingOrders(): Flow<Int>
 
@@ -63,6 +74,18 @@ interface OrderDao {
         """
     )
     fun todayRevenue(dayStartMillis: Long): Flow<Double>
+
+    @Query(
+        """
+        SELECT oi.dishId AS dishId, SUM(oi.quantite) AS totalQuantity
+        FROM order_items AS oi
+        INNER JOIN orders AS o ON o.id = oi.orderId
+        WHERE oi.dishId IS NOT NULL
+        GROUP BY oi.dishId
+        ORDER BY totalQuantity DESC
+        """
+    )
+    fun observeDishSalesAggregates(): Flow<List<DishSalesAggregate>>
 
     @Transaction
     @Query(

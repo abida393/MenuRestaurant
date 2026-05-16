@@ -4,10 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
@@ -17,8 +15,11 @@ import com.google.android.material.snackbar.Snackbar
 import com.savoria.app.R
 import com.savoria.app.data.local.entity.Dish
 import com.savoria.app.ui.SharedDishViewModel
+import com.savoria.app.ui.common.UiState
 import com.savoria.app.ui.client.cart.CartViewModel
 import com.savoria.app.ui.client.cart.ConsumptionModeBottomSheet
+import com.savoria.app.ui.util.DishImageLoader
+import com.savoria.app.ui.util.DishImageLoader.toDetailArgs
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -42,14 +43,12 @@ class DishDetailFragment : Fragment() {
         val title = arguments?.getString("title") ?: "Plat"
         val price = arguments?.getString("price") ?: "0,00 €"
         val description = arguments?.getString("description").orEmpty()
-        val imageRes = arguments?.getInt("imageRes", 0) ?: 0
+        val photoUrl = arguments?.getString("photoUrl").orEmpty()
 
         view.findViewById<TextView>(R.id.tv_detail_title).text = title
         view.findViewById<TextView>(R.id.tv_detail_price).text = price
         view.findViewById<TextView>(R.id.tv_detail_description).text = description
-        if (imageRes != 0) {
-            view.findViewById<ImageView>(R.id.iv_hero_image).setImageResource(imageRes)
-        }
+        DishImageLoader.load(view.findViewById(R.id.iv_hero_image), photoUrl)
 
         val btnAdd = view.findViewById<TextView>(R.id.btn_add_to_selection)
         btnAdd.text = "AJOUTER À LA SÉLECTION — $price   "
@@ -61,7 +60,7 @@ class DishDetailFragment : Fragment() {
             prix = arguments?.getDouble("prixRaw") ?: 0.0,
             prixFormat = price,
             description = description,
-            photoUrl = "",
+            photoUrl = photoUrl,
             disponible = true
         )
 
@@ -89,33 +88,31 @@ class DishDetailFragment : Fragment() {
         val inflater = LayoutInflater.from(context)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.allDishes.collect { allDishes ->
+            viewModel.allDishesState.collect { state ->
                 container.removeAllViews()
+                val allDishes = when (state) {
+                    is UiState.Success -> state.data
+                    else -> emptyList()
+                }
                 allDishes
                     .filter { it.disponible && it.isValidatedByAdmin && it.nom != currentTitle }
                     .take(3)
                     .forEach { dish ->
-                    val itemView = inflater.inflate(R.layout.item_similar_dish, container, false)
-                    itemView.findViewById<TextView>(R.id.tv_title).text = dish.nom
-                    itemView.findViewById<TextView>(R.id.tv_price).text = dish.prixFormat
-                    val imageResId = resources.getIdentifier(
-                        dish.photoUrl, "drawable", requireContext().packageName
-                    )
-                    itemView.setOnClickListener {
-                        findNavController().navigate(
-                            R.id.navigation_dish_detail,
-                            bundleOf(
-                                "dishId" to dish.id,
-                                "title" to dish.nom,
-                                "price" to dish.prixFormat,
-                                "prixRaw" to dish.prix,
-                                "description" to dish.description,
-                                "imageRes" to imageResId
-                            )
+                        val itemView = inflater.inflate(R.layout.item_similar_dish, container, false)
+                        itemView.findViewById<TextView>(R.id.tv_title).text = dish.nom
+                        itemView.findViewById<TextView>(R.id.tv_price).text = dish.prixFormat
+                        DishImageLoader.load(
+                            itemView.findViewById(R.id.iv_dish_image),
+                            dish.photoUrl
                         )
+                        itemView.setOnClickListener {
+                            findNavController().navigate(
+                                R.id.navigation_dish_detail,
+                                dish.toDetailArgs()
+                            )
+                        }
+                        container.addView(itemView)
                     }
-                    container.addView(itemView)
-                }
             }
         }
     }

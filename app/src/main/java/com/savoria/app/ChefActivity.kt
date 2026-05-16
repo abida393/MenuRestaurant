@@ -2,6 +2,7 @@ package com.savoria.app
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -9,7 +10,9 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.savoria.app.data.local.StaffSessionManager
+import com.savoria.app.ui.admin.AdminActivity
 import com.savoria.app.ui.admin.login.LoginActivity
+import com.savoria.app.ui.serveur.ServeurActivity
 
 class ChefActivity : AppCompatActivity() {
 
@@ -17,21 +20,40 @@ class ChefActivity : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        if (!StaffSessionManager.isLoggedIn(this)) {
-            redirectToLogin()
-            return
+        when {
+            !StaffSessionManager.isLoggedIn(this) -> {
+                redirectToLogin()
+                return
+            }
+            StaffSessionManager.isChef(this) -> Unit
+            StaffSessionManager.isServeur(this) -> {
+                startActivity(Intent(this, ServeurActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                })
+                finish()
+                return
+            }
+            StaffSessionManager.isAdmin(this) -> {
+                startActivity(Intent(this, AdminActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                })
+                finish()
+                return
+            }
+            else -> {
+                redirectToLogin()
+                return
+            }
         }
 
         setContentView(R.layout.activity_chef)
 
-        // Adjust for system bars
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.chef_root_container)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
             insets
         }
 
-        // Adjust BottomNav for bottom insets
         val bottomNav: BottomNavigationView = findViewById(R.id.chef_bottom_nav)
         ViewCompat.setOnApplyWindowInsetsListener(bottomNav) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

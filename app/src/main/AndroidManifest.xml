@@ -40,13 +40,19 @@
              ADMIN DASHBOARD — reached after login
              ══════════════════════════════════════════ -->
         <activity
-            android:name="com.savoria.app.MainActivity"
-            android:exported="false" />
+            android:name="com.savoria.app.ui.admin.AdminActivity"
+            android:exported="false"
+            android:theme="@style/Theme.RestaurantManager" />
 
         <activity
             android:name=".ChefActivity"
             android:exported="false"
             android:theme="@style/Theme.Savoria.NoActionBar" />
+
+        <activity
+            android:name="com.savoria.app.ui.serveur.ServeurActivity"
+            android:exported="false"
+            android:theme="@style/Theme.RestaurantManager" />
 
     </application>
 

@@ -12,7 +12,9 @@ import com.savoria.app.databinding.ItemDishAdminBinding
 class DishAdminAdapter(
     private val onEdit: (Dish) -> Unit,
     private val onDelete: (Dish) -> Unit,
-    private val onAvailabilityChanged: (Dish, Boolean) -> Unit
+    private val onAvailabilityChanged: (Dish, Boolean) -> Unit,
+    private val onValidate: (Dish) -> Unit,
+    private val showValidateButton: Boolean = true
 ) : ListAdapter<Dish, DishAdminAdapter.DishViewHolder>(DIFF_CALLBACK) {
 
     inner class DishViewHolder(private val binding: ItemDishAdminBinding) :
@@ -20,7 +22,7 @@ class DishAdminAdapter(
 
         fun bind(dish: Dish) {
             binding.textName.text = dish.nom
-            binding.textPrice.text = "%.2f €".format(dish.prix)
+            binding.textPrice.text = dish.prixFormat.ifBlank { "%.2f €".format(dish.prix) }
             binding.textCategory.text = buildString {
                 append(dish.categoryId ?: "Sans catégorie")
                 if (!dish.isValidatedByAdmin) append(" • En attente de validation")
@@ -30,6 +32,10 @@ class DishAdminAdapter(
 
             binding.badgeChefSpecialty.visibility =
                 if (dish.isChefSpecial) View.VISIBLE else View.GONE
+
+            binding.btnValidate.visibility =
+                if (showValidateButton && !dish.isValidatedByAdmin) View.VISIBLE else View.GONE
+            binding.btnValidate.setOnClickListener { onValidate(dish) }
 
             binding.switchAvailable.setOnCheckedChangeListener(null)
             binding.switchAvailable.isChecked = dish.disponible

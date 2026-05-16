@@ -7,18 +7,17 @@ import com.savoria.app.SavoriaApplication
 import com.savoria.app.data.local.ClientSessionManager
 import com.savoria.app.data.local.entity.OrderStatus
 import com.savoria.app.data.local.relation.OrderWithItems
-import kotlinx.coroutines.flow.SharingStarted
+import com.savoria.app.ui.common.UiState
+import com.savoria.app.ui.common.stateInAsListUiState
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 
 class SuiviViewModel(application: Application) : AndroidViewModel(application) {
 
     private val sessionId = ClientSessionManager.getSessionId(application)
     private val repository = (application as SavoriaApplication).clientOrderRepository
 
-    val activeOrders: StateFlow<List<OrderWithItems>> = repository
-        .activeOrdersForSession(sessionId)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val activeOrdersState: StateFlow<UiState<List<OrderWithItems>>> =
+        repository.activeOrdersForSession(sessionId).stateInAsListUiState(viewModelScope)
 
     companion object {
         fun progressFor(status: OrderStatus): Int = when (status) {

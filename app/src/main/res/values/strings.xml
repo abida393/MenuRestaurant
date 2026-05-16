@@ -7,6 +7,49 @@
     <string name="nav_plats">Gestion Plats</string>
     <string name="nav_categories">Catégories</string>
     <string name="nav_settings">Paramètres</string>
+    <string name="nav_users">Utilisateurs</string>
+    <string name="admin_toolbar_title">Administration Savoria</string>
+    <string name="admin_logout">Déconnexion</string>
+    <string name="admin_validate_dish">Valider</string>
+    <string name="admin_pending_validation">En attente de validation</string>
+    <string name="dashboard_orders_today">%1$d commandes aujourd\'hui</string>
+    <string name="dashboard_no_top_dishes">Aucune commande enregistrée pour le moment</string>
+    <string name="dashboard_no_category">Sans catégorie</string>
+    <string name="dashboard_in_stock">DISPONIBLE</string>
+    <string name="dashboard_out_of_stock">INDISPONIBLE</string>
+    <plurals name="dashboard_dish_orders">
+        <item quantity="one">%d commande</item>
+        <item quantity="other">%d commandes</item>
+    </plurals>
+    <string name="category_name_hint">Nom de la catégorie (ex: Pizzas)</string>
+    <string name="category_add_title">Nouvelle catégorie</string>
+    <string name="category_add_confirm">Ajouter</string>
+    <string name="category_delete_title">Supprimer la catégorie</string>
+    <string name="category_delete_message">Supprimer « %1$s » ? Les plats liés n\'auront plus de catégorie.</string>
+    <string name="category_deleted">Catégorie supprimée</string>
+    <string name="category_none_available">Ajoutez d\'abord une catégorie</string>
+    <string name="category_rename">Renommer</string>
+    <string name="category_change_order">Modifier l\'ordre</string>
+    <string name="category_rename_title">Renommer la catégorie</string>
+    <string name="category_order_title">Ordre d\'affichage</string>
+    <string name="category_order_hint">Position (1 = en premier)</string>
+    <string name="category_order_invalid">Saisissez un nombre entier ≥ 1</string>
+    <string name="category_updated">Catégorie mise à jour</string>
+    <string name="category_list_meta">Ordre %1$d · %2$s</string>
+    <string name="user_add_title">Nouvel utilisateur</string>
+    <string name="user_add_confirm">Créer</string>
+    <string name="user_delete_title">Supprimer l\'utilisateur</string>
+    <string name="user_delete_message">Supprimer %1$s ?</string>
+    <string name="dish_name_required">Le nom est requis</string>
+    <string name="dish_price_required">Le prix est requis</string>
+    <string name="dish_saved">Plat enregistré</string>
+    <string name="menu_all_dishes">Tous les plats</string>
+    <string name="search_title">Recherche</string>
+    <string name="search_hint">Rechercher nos plats signatures…</string>
+    <string name="search_recent">Recherches récentes</string>
+    <string name="search_suggestions">Suggestions</string>
+    <string name="search_no_results">Aucun plat trouvé</string>
+    <string name="search_clear_history">Effacer</string>
 
     <!-- Actions -->
     <string name="btn_ajouter_plat">Ajouter un Plat</string>
@@ -15,6 +58,11 @@
     <string name="loading">Chargement...</string>
     <string name="error_generic">Une erreur est survenue</string>
     <string name="empty_list">Aucun élément trouvé</string>
+    <string name="menu_empty_loading">Chargement du menu…</string>
+    <string name="menu_empty_unavailable">Aucun plat disponible pour le moment.</string>
+    <string name="menu_empty_filtered">Aucun plat ne correspond à ce filtre.</string>
+    <string name="cart_empty">Votre panier est vide.\nAjoutez des plats depuis le menu.</string>
+    <string name="favorites_empty">Vous n\'avez pas encore de favoris.</string>
     <string name="todo">À FAIRE</string>
     <string name="todo2">À FAIRE</string>
     <string name="todo3">À FAIRE</string>
@@ -36,7 +84,16 @@
     <string name="login_error_invalid">Identifiants incorrects. Vérifiez l\'email et le mot de passe.</string>
     <string name="login_error_inactive">Ce compte est désactivé. Contactez l\'administrateur.</string>
     <string name="login_recover_hint">Contactez l\'administrateur pour réinitialiser votre accès.</string>
-    <string name="login_demo_accounts">Comptes de démo :\n• Admin : admin@savoria.com / admin123\n• Chef : chef@savoria.com / chef123\n• Serveur : serveur@savoria.com / serveur123</string>
+    <string name="login_staff_credentials_hint">Les mots de passe initiaux sont générés à la première installation et affichés une seule fois. Conservez-les en lieu sûr.</string>
+    <string name="initial_credentials_title">Comptes personnel — mots de passe initiaux</string>
+    <string name="initial_credentials_message">Ces mots de passe ne seront plus affichés. Notez-les ou copiez-les avant de continuer.</string>
+    <string name="initial_credentials_line">%1$s\n  Email : %2$s\n  Mot de passe : %3$s</string>
+    <string name="initial_credentials_ack">J\'ai noté les mots de passe</string>
+    <string name="initial_credentials_copy">Copier</string>
+    <string name="initial_credentials_copied">Identifiants copiés dans le presse-papiers</string>
+    <string name="role_admin">Administrateur</string>
+    <string name="role_chef">Chef</string>
+    <string name="role_serveur">Serveur</string>
 
     <!-- Notifications commande prête -->
     <string name="notification_channel_orders">Commandes Savoria</string>
@@ -46,6 +103,10 @@
 
     <!-- Chef -->
     <string name="chef_logout">Déconnexion</string>
+    <string name="serveur_toolbar_title">Service en salle</string>
+    <string name="serveur_mark_served">Marquer comme servi</string>
+    <string name="serveur_marked_served">Commande servie</string>
+    <string name="serveur_empty_orders">Aucune commande prête à servir</string>
     <string name="chef_my_dishes">Mes plats</string>
     <string name="chef_no_dishes">Aucun plat enregistré</string>
     <string name="dish_pending_validation">Plat soumis — en attente de validation par l\'admin</string>

@@ -10,6 +10,8 @@ import com.savoria.app.data.local.entity.ConsumptionMode
 import com.savoria.app.data.local.entity.Dish
 import com.savoria.app.data.local.entity.OrderEntity
 import com.savoria.app.data.repository.CartLine
+import com.savoria.app.ui.common.UiState
+import com.savoria.app.ui.common.stateInAsListUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -35,17 +37,17 @@ class CartViewModel(application: Application) : AndroidViewModel(application) {
 
     private val app = application as SavoriaApplication
     private val sessionId = ClientSessionManager.getSessionId(application)
+    private val cartItemsFlow = app.cartRepository.observeCart(sessionId)
 
-    val cartItems: StateFlow<List<CartItemEntity>> = app.cartRepository
-        .observeCart(sessionId)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val cartItemsState: StateFlow<UiState<List<CartItemEntity>>> =
+        cartItemsFlow.stateInAsListUiState(viewModelScope)
+
+    val invoice: StateFlow<CartInvoice> = cartItemsFlow
+        .map { items -> buildInvoice(items) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), CartInvoice())
 
     private val _consumptionMode = MutableStateFlow(ConsumptionMode.SUR_PLACE)
     val consumptionMode: StateFlow<ConsumptionMode> = _consumptionMode.asStateFlow()
-
-    val invoice: StateFlow<CartInvoice> = cartItems
-        .map { items -> buildInvoice(items) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), CartInvoice())
 
     private val _orderPlaced = MutableStateFlow<OrderPlacedEvent?>(null)
     val orderPlaced: StateFlow<OrderPlacedEvent?> = _orderPlaced.asStateFlow()
@@ -70,7 +72,7 @@ class CartViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun placeOrder() {
-        val items = cartItems.value
+        val items = (cartItemsState.value as? UiState.Success)?.data ?: return
         if (items.isEmpty()) return
         viewModelScope.launch {
             val inv = buildInvoice(items)

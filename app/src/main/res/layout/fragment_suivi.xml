@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F0EB"
@@ -23,23 +24,36 @@
         android:textColor="#777770"
         android:textSize="13sp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_suivi"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        android:layout_weight="1"
-        android:clipToPadding="false" />
+        android:layout_weight="1">
 
-    <TextView
-        android:id="@+id/tv_suivi_empty"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="Aucune commande active"
-        android:textColor="#999990"
-        android:visibility="gone" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_suivi"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progress_suivi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:indicatorColor="#A02020" />
+
+        <TextView
+            android:id="@+id/tv_suivi_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Aucune commande active"
+            android:textColor="#999990"
+            android:visibility="gone" />
+    </FrameLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_order_more"

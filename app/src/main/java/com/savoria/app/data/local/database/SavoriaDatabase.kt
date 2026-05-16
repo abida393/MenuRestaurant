@@ -1,4 +1,4 @@
-package com.savoria.app.data.local
+package com.savoria.app.data.local.database
 
 import android.content.Context
 import androidx.room.Database
@@ -7,6 +7,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.savoria.app.data.local.OrderSeeder
+import com.savoria.app.data.local.UserSeeder
 import com.savoria.app.data.local.converter.Converters
 import com.savoria.app.data.local.dao.CartDao
 import com.savoria.app.data.local.dao.CategoryDao
@@ -69,14 +71,12 @@ abstract class SavoriaDatabase : RoomDatabase() {
                     SavoriaDatabase::class.java,
                     "savoria_database"
                 )
-                .addCallback(DatabaseCallback(scope))
+                .addCallback(DatabaseCallback(context.applicationContext, scope))
                 .addMigrations(
                     object : Migration(2, 3) {
                     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("ALTER TABLE dishes ADD COLUMN badgeType TEXT")
                         database.execSQL("UPDATE dishes SET badgeType = NULL")
-                        // drop badgeRes: SQLite does not support DROP COLUMN directly
-                        // recreate the table without badgeRes
                         database.execSQL("""
                             CREATE TABLE dishes_new (
                                 id TEXT NOT NULL PRIMARY KEY,
@@ -130,15 +130,6 @@ abstract class SavoriaDatabase : RoomDatabase() {
                             )
                         }
                     },
-                    object : Migration(6, 7) {
-                        override fun migrate(database: SupportSQLiteDatabase) {
-                            database.execSQL(
-                                "ALTER TABLE dishes ADD COLUMN isValidatedByAdmin INTEGER NOT NULL DEFAULT 0"
-                            )
-                            database.execSQL("UPDATE dishes SET isValidatedByAdmin = 1")
-                            database.execSQL("ALTER TABLE orders ADD COLUMN excuseMessage TEXT")
-                        }
-                    },
                     object : Migration(5, 6) {
                         override fun migrate(database: SupportSQLiteDatabase) {
                             database.execSQL(
@@ -173,6 +164,15 @@ abstract class SavoriaDatabase : RoomDatabase() {
                                 "CREATE INDEX IF NOT EXISTS index_orders_clientSessionId ON orders(clientSessionId)"
                             )
                         }
+                    },
+                    object : Migration(6, 7) {
+                        override fun migrate(database: SupportSQLiteDatabase) {
+                            database.execSQL(
+                                "ALTER TABLE dishes ADD COLUMN isValidatedByAdmin INTEGER NOT NULL DEFAULT 0"
+                            )
+                            database.execSQL("UPDATE dishes SET isValidatedByAdmin = 1")
+                            database.execSQL("ALTER TABLE orders ADD COLUMN excuseMessage TEXT")
+                        }
                     }
                 )
                 .build()
@@ -183,15 +183,15 @@ abstract class SavoriaDatabase : RoomDatabase() {
     }
 
     private class DatabaseCallback(
+        private val appContext: Context,
         private val scope: kotlinx.coroutines.CoroutineScope
     ) : RoomDatabase.Callback() {
         override fun onCreate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
             super.onCreate(db)
             INSTANCE?.let { database ->
                 scope.launch {
-                    UserSeeder.ensureDefaultUsers(database.userDao())
+                    UserSeeder.ensureStaffAccounts(appContext, database.userDao())
                     populateDatabase(database)
-                    OrderSeeder.seedSampleChefOrders(database)
                 }
             }
         }
@@ -200,7 +200,7 @@ abstract class SavoriaDatabase : RoomDatabase() {
             super.onOpen(db)
             INSTANCE?.let { database ->
                 scope.launch {
-                    UserSeeder.ensureDefaultUsers(database.userDao())
+                    UserSeeder.ensureStaffAccounts(appContext, database.userDao())
                     OrderSeeder.seedSampleChefOrders(database)
                 }
             }
@@ -302,7 +302,6 @@ abstract class SavoriaDatabase : RoomDatabase() {
             dishes.forEach { dishDao.insertDish(it) }
         }
 
-        /** Insère des commandes de démo — appelable depuis les tests ou le debug. */
         suspend fun seedSampleChefOrders(database: SavoriaDatabase) {
             OrderSeeder.seedSampleChefOrders(database)
         }

@@ -1,5 +1,6 @@
 package com.savoria.app.data.local
 
+import com.savoria.app.data.local.database.SavoriaDatabase
 import com.savoria.app.data.local.entity.ChefOrder
 import com.savoria.app.data.local.entity.ChefOrderStatus
 import com.savoria.app.data.local.entity.ConsumptionMode

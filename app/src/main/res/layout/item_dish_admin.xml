@@ -99,6 +99,15 @@
                 android:layout_weight="1" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnValidate"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/admin_validate_dish"
+                android:textColor="#22A060"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEdit"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"

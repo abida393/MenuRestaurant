@@ -11,13 +11,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.bumptech.glide.Glide
 import com.savoria.app.R
+import com.savoria.app.ui.util.DishImageLoader
 import com.savoria.app.SavoriaApplication
 import com.savoria.app.data.local.entity.Dish
 import com.savoria.app.databinding.DialogDishBinding
 import com.savoria.app.ui.viewmodel.AdminViewModel
-import com.savoria.app.ui.viewmodel.ViewModelFactory
+import com.savoria.app.ui.viewmodel.AdminViewModelFactory
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -27,7 +27,7 @@ class DishDialogFragment : DialogFragment() {
     private val binding get() = _binding!!
 
     private val viewModel: AdminViewModel by activityViewModels {
-        ViewModelFactory((requireActivity().application as SavoriaApplication).dishRepository)
+        AdminViewModelFactory(requireActivity().application as SavoriaApplication)
     }
 
     private var existingDishId: String? = null
@@ -44,7 +44,7 @@ class DishDialogFragment : DialogFragment() {
         uri?.let {
             photoUrl = it.toString()
             binding.imgPreview.visibility = View.VISIBLE
-            Glide.with(this).load(it).centerCrop().into(binding.imgPreview)
+            DishImageLoader.load(binding.imgPreview, it.toString())
         }
     }
 
@@ -63,7 +63,7 @@ class DishDialogFragment : DialogFragment() {
         photoUrl = arguments?.getString(ARG_PHOTO).orEmpty()
         if (photoUrl.isNotBlank()) {
             binding.imgPreview.visibility = View.VISIBLE
-            Glide.with(this).load(photoUrl).centerCrop().into(binding.imgPreview)
+            DishImageLoader.load(binding.imgPreview, photoUrl)
         }
 
         binding.btnAddPhoto.setOnClickListener {
