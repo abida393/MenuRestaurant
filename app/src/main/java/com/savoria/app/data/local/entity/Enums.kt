@@ -13,7 +13,8 @@ enum class OrderStatus {
     EN_ATTENTE,
     EN_PREPARATION,
     PRET,
-    SERVI;
+    SERVI,
+    ANNULEE;
 
     companion object {
         /** Compatibilité migration anciennes valeurs Room. */

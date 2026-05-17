@@ -22,7 +22,11 @@ class SavoriaApplication : Application() {
         ClientOrderRepository(database.orderDao(), database.chefOrderDao())
     }
     val orderRepository by lazy {
-        OrderRepository(database.chefOrderDao(), database.orderDao())
+        OrderRepository(
+            database.chefOrderDao(),
+            database.orderDao(),
+            cartRepository
+        )
     }
 
     private val orderReadyNotifier by lazy {

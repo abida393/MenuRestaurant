@@ -25,6 +25,7 @@ class SuiviViewModel(application: Application) : AndroidViewModel(application) {
             OrderStatus.EN_PREPARATION -> 60
             OrderStatus.PRET -> 100
             OrderStatus.SERVI -> 100
+            OrderStatus.ANNULEE -> 0
         }
 
         fun labelFor(status: OrderStatus): String = when (status) {
@@ -32,6 +33,7 @@ class SuiviViewModel(application: Application) : AndroidViewModel(application) {
             OrderStatus.EN_PREPARATION -> "En cuisine 👨‍🍳"
             OrderStatus.PRET -> "Prêt ✅ — récupérez votre commande"
             OrderStatus.SERVI -> "Servie"
+            OrderStatus.ANNULEE -> "Commande annulée"
         }
     }
 }

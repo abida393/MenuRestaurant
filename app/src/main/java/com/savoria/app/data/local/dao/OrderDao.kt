@@ -40,6 +40,9 @@ interface OrderDao {
     @Query("SELECT COUNT(*) FROM orders WHERE statut = 'SERVI'")
     fun countCompletedOrders(): Flow<Int>
 
+    @Query("SELECT COUNT(*) FROM orders")
+    fun countAllOrders(): Flow<Int>
+
     @Transaction
     @Query("SELECT * FROM orders ORDER BY creeLe DESC")
     fun getAllOrdersWithItems(): Flow<List<OrderWithItems>>
@@ -48,11 +51,22 @@ interface OrderDao {
     @Query(
         """
         SELECT * FROM orders 
-        WHERE statut != 'SERVI' 
+        WHERE statut IN ('EN_ATTENTE', 'EN_PREPARATION')
         ORDER BY creeLe ASC
         """
     )
     fun getActiveKitchenOrdersWithItems(): Flow<List<OrderWithItems>>
+
+    @Transaction
+    @Query(
+        """
+        SELECT * FROM orders 
+        WHERE statut IN ('PRET', 'SERVI')
+        ORDER BY creeLe DESC
+        LIMIT 50
+        """
+    )
+    fun getArchivedKitchenOrdersWithItems(): Flow<List<OrderWithItems>>
 
     @Transaction
     @Query(
@@ -94,7 +108,7 @@ interface OrderDao {
         """
         SELECT * FROM orders 
         WHERE clientSessionId = :sessionId 
-        AND statut != 'SERVI' 
+        AND statut NOT IN ('SERVI', 'ANNULEE')
         ORDER BY creeLe DESC
         """
     )

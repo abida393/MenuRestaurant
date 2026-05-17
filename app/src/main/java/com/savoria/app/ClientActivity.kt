@@ -25,6 +25,7 @@ class ClientActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_NAVIGATE_TO_MENU = "navigate_to_menu"
+        const val EXTRA_NAVIGATE_TO_HOME = "navigate_to_home"
     }
 
     private lateinit var drawerLayout: DrawerLayout
@@ -63,10 +64,7 @@ class ClientActivity : AppCompatActivity() {
 
         navController = navHostFragment.navController
         bottomNav.setupWithNavController(navController)
-
-        if (intent.getBooleanExtra(EXTRA_NAVIGATE_TO_MENU, false)) {
-            navController.navigate(R.id.navigation_menu_client)
-        }
+        handleNavigationIntent(intent)
 
         val navView: NavigationView = findViewById(R.id.nav_view)
         navView.setNavigationItemSelectedListener { menuItem ->
@@ -86,8 +84,15 @@ class ClientActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        if (intent.getBooleanExtra(EXTRA_NAVIGATE_TO_MENU, false)) {
-            navController.navigate(R.id.navigation_menu_client)
+        handleNavigationIntent(intent)
+    }
+
+    private fun handleNavigationIntent(intent: Intent) {
+        when {
+            intent.getBooleanExtra(EXTRA_NAVIGATE_TO_HOME, false) ->
+                navController.navigate(R.id.navigation_home)
+            intent.getBooleanExtra(EXTRA_NAVIGATE_TO_MENU, false) ->
+                navController.navigate(R.id.navigation_menu_client)
         }
     }
 

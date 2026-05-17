@@ -55,7 +55,7 @@ class OrderExcuseNotifier(
         val shortId = orderId.take(6).uppercase()
         val intent = Intent(context, ClientActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra(ClientActivity.EXTRA_NAVIGATE_TO_MENU, true)
+            putExtra(ClientActivity.EXTRA_NAVIGATE_TO_HOME, true)
         }
         val pendingIntent = PendingIntent.getActivity(
             context,
