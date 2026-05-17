@@ -50,11 +50,12 @@ class CheckoutBottomSheet : BottomSheetDialogFragment() {
                 linesContainer.removeAllViews()
                 val inflater = LayoutInflater.from(requireContext())
                 items.forEach { item ->
-                    val row = inflater.inflate(android.R.layout.simple_list_item_2, linesContainer, false)
-                    row.findViewById<TextView>(android.R.id.text1).text = item.nom
-                    row.findViewById<TextView>(android.R.id.text2).text =
+                    val row = inflater.inflate(R.layout.item_invoice_line, linesContainer, false)
+                    row.findViewById<TextView>(R.id.tv_invoice_dish_name).text = item.nom
+                    row.findViewById<TextView>(R.id.tv_invoice_price_qty).text =
                         "${item.quantite} × ${String.format(Locale.FRANCE, "%.2f €", item.prix)}"
                     linesContainer.addView(row)
+
                 }
             }
         }

@@ -44,8 +44,9 @@ import kotlinx.coroutines.launch
         ChefOrder::class,
         CartItemEntity::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = false
+
 )
 @TypeConverters(Converters::class)
 abstract class SavoriaDatabase : RoomDatabase() {
@@ -173,11 +174,20 @@ abstract class SavoriaDatabase : RoomDatabase() {
                             database.execSQL("UPDATE dishes SET isValidatedByAdmin = 1")
                             database.execSQL("ALTER TABLE orders ADD COLUMN excuseMessage TEXT")
                         }
+                    },
+                    object : Migration(7, 8) {
+                        override fun migrate(database: SupportSQLiteDatabase) {
+                            database.execSQL(
+                                "ALTER TABLE order_items ADD COLUMN nomPlat TEXT NOT NULL DEFAULT ''"
+                            )
+                        }
                     }
                 )
+                .fallbackToDestructiveMigration()
                 .build()
                 INSTANCE = instance
                 instance
+
             }
         }
     }

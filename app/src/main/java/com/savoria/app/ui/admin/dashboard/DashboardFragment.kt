@@ -38,8 +38,9 @@ class DashboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val tvTotal = view.findViewById<TextView>(R.id.tv_total_dishes)
-        val tvSpecialties = view.findViewById<TextView>(R.id.tv_total_categories)
-        val tvUnavailable = view.findViewById<TextView>(R.id.tv_active_promos)
+        val tvSpecialties = view.findViewById<TextView>(R.id.tv_chef_specialties)
+        val tvUnavailable = view.findViewById<TextView>(R.id.tv_pending_validation)
+
         val tvRevenue = view.findViewById<TextView>(R.id.tv_total_revenue)
         val tvOrdersCount = view.findViewById<TextView>(R.id.tv_orders_count)
         val popularContainer = view.findViewById<LinearLayout>(R.id.ll_popular_dishes)

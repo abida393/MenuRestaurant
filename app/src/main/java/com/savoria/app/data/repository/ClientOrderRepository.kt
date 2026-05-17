@@ -39,9 +39,11 @@ class ClientOrderRepository(
                     orderId = order.id,
                     dishId = line.dishId,
                     quantite = line.quantity,
+                    nomPlat = line.nom,
                     instructions = "",
                     statutItem = OrderItemStatus.EN_ATTENTE
                 )
+
             }
         )
         chefOrderDao.insertAll(

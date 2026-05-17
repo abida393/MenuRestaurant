@@ -4,12 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.snackbar.Snackbar
@@ -24,7 +26,9 @@ import java.util.Locale
 class CartFragment : Fragment() {
 
     private val cartViewModel: CartViewModel by activityViewModels()
-    private lateinit var cartContainer: LinearLayout
+    private lateinit var cartAdapter: CartAdapter
+    private lateinit var recyclerCart: RecyclerView
+
     private lateinit var tvSubtotal: TextView
     private lateinit var tvTax: TextView
     private lateinit var tvTotal: TextView
@@ -43,7 +47,7 @@ class CartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        cartContainer = view.findViewById(R.id.ll_cart_items)
+        recyclerCart = view.findViewById(R.id.recycler_cart)
         tvSubtotal = view.findViewById(R.id.tv_cart_subtotal)
         tvTax = view.findViewById(R.id.tv_cart_tax)
         tvTotal = view.findViewById(R.id.tv_cart_total)
@@ -52,6 +56,17 @@ class CartFragment : Fragment() {
         tvCartEmpty = view.findViewById(R.id.tv_cart_empty)
         layoutCartFooter = view.findViewById(R.id.layout_cart_footer)
         progressCart = view.findViewById(R.id.progress_cart)
+ 
+        cartAdapter = CartAdapter(
+            onIncrement = { cartViewModel.incrementQuantity(it) },
+            onDecrement = { cartViewModel.decrementQuantity(it) },
+            onRemoveAll = { confirmDeletion(it) }
+        )
+        recyclerCart.adapter = cartAdapter
+
+        setupSwipeToDelete()
+
+
 
         btnOrder.setOnClickListener {
             val items = (cartViewModel.cartItemsState.value as? UiState.Success)?.data
@@ -68,8 +83,9 @@ class CartFragment : Fragment() {
                         progressCart.bindListLoading(true)
                         tvCartEmpty.visibility = View.GONE
                         layoutCartFooter.visibility = View.GONE
-                        cartContainer.removeAllViews()
+                        cartAdapter.submitList(emptyList())
                         btnOrder.isEnabled = false
+
                     }
                     UiState.Empty -> {
                         progressCart.bindListLoading(false)
@@ -115,25 +131,40 @@ class CartFragment : Fragment() {
         tvCartEmpty.visibility = if (isEmpty) View.VISIBLE else View.GONE
         layoutCartFooter.visibility = if (isEmpty) View.GONE else View.VISIBLE
         btnOrder.isEnabled = !isEmpty
+        cartAdapter.submitList(items)
+    }
 
-        cartContainer.removeAllViews()
-        if (isEmpty) return
-
-        val inflater = LayoutInflater.from(requireContext())
-        for (item in items) {
-            val row = inflater.inflate(R.layout.item_cart_dish, cartContainer, false)
-            row.findViewById<TextView>(R.id.tv_cart_dish_name).text = item.nom
-            row.findViewById<TextView>(R.id.tv_cart_dish_price).text =
-                String.format(Locale.FRANCE, "%.2f €", item.prix)
-            row.findViewById<TextView>(R.id.tv_cart_dish_quantity).text = "Qté : ${item.quantite}"
-            row.findViewById<TextView>(R.id.btn_remove_cart_item).setOnClickListener {
-                cartViewModel.removeFromCart(item)
+    private fun setupSwipeToDelete() {
+        val swipeHandler = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(rv: RecyclerView, vh: RecyclerView.ViewHolder, t: RecyclerView.ViewHolder): Boolean = false
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val item = cartAdapter.currentList[position]
+                confirmDeletion(item)
             }
-            cartContainer.addView(row)
         }
+        ItemTouchHelper(swipeHandler).attachToRecyclerView(recyclerCart)
+    }
+
+    private fun confirmDeletion(item: CartItemEntity) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Supprimer l'article ?")
+            .setMessage("Voulez-vous retirer tous les exemplaires de ${item.nom} du panier ?")
+            .setNegativeButton("Annuler") { _, _ -> 
+                cartAdapter.notifyDataSetChanged() // Reset swipe state
+            }
+            .setPositiveButton("Supprimer") { _, _ ->
+                cartViewModel.forceRemoveFromCart(item)
+                Snackbar.make(requireView(), "${item.nom} retiré du panier", Snackbar.LENGTH_SHORT).show()
+            }
+            .setOnCancelListener {
+                cartAdapter.notifyDataSetChanged()
+            }
+            .show()
     }
 
     private fun showSuccessAndReceipt(event: OrderPlacedEvent) {
+
         val root = requireView()
         Snackbar.make(root, "✓ Commande confirmée avec succès !", Snackbar.LENGTH_LONG)
             .setBackgroundTint(0xFFA02020.toInt())

@@ -53,13 +53,13 @@ class AdminViewModel(
     private val orderDao: OrderDao
 ) : ViewModel() {
 
-    private val dayStartMillis: Long
-        get() = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }.timeInMillis
+    private val dayStartMillis: Long = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }.timeInMillis
+
 
     val allDishes: StateFlow<List<Dish>> = dishRepository.allDishes
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
@@ -144,7 +144,9 @@ class AdminViewModel(
 
     fun deleteDish(dish: Dish) = viewModelScope.launch {
         dishRepository.delete(dish)
+        _saveMessage.value = "Plat supprimé"
     }
+
 
     fun validateDish(dish: Dish) = viewModelScope.launch {
         dishRepository.update(dish.copy(isValidatedByAdmin = true))
@@ -161,7 +163,9 @@ class AdminViewModel(
         val trimmed = name.trim()
         if (trimmed.isEmpty()) return@launch
         val nextOrder = (allCategories.value.maxOfOrNull { it.ordreAffichage } ?: 0) + 1
-        val id = trimmed.lowercase()
+        val normalized = java.text.Normalizer.normalize(trimmed, java.text.Normalizer.Form.NFD)
+        val cleanAccent = normalized.replace(Regex("\\p{InCombiningDiacriticalMarks}+"), "")
+        val id = cleanAccent.lowercase(java.util.Locale.ROOT)
             .replace(Regex("[^a-z0-9]+"), "-")
             .trim('-')
             .ifEmpty { UUID.randomUUID().toString() }
@@ -172,9 +176,19 @@ class AdminViewModel(
     }
 
     fun updateCategory(category: Category) = viewModelScope.launch {
+        val oldCategory = allCategories.value.find { it.id == category.id }
+        if (oldCategory != null && oldCategory.ordreAffichage != category.ordreAffichage) {
+            val conflictingCategory = allCategories.value.find { 
+                it.ordreAffichage == category.ordreAffichage && it.id != category.id 
+            }
+            if (conflictingCategory != null) {
+                categoryDao.updateCategory(conflictingCategory.copy(ordreAffichage = oldCategory.ordreAffichage))
+            }
+        }
         categoryDao.updateCategory(category)
         _saveMessage.value = "Catégorie mise à jour"
     }
+
 
     fun deleteCategory(category: Category) = viewModelScope.launch {
         categoryDao.deleteCategory(category)
@@ -191,6 +205,13 @@ class AdminViewModel(
         userDao.deleteUser(user)
         refreshUsers()
     }
+
+    fun updateUser(user: User) = viewModelScope.launch {
+        userDao.updateUser(user)
+        refreshUsers()
+        _saveMessage.value = "Utilisateur mis à jour"
+    }
+
 
     fun clearSaveMessage() {
         _saveMessage.value = null

@@ -14,8 +14,10 @@ import com.savoria.app.ui.util.BadgeUtils
 import com.savoria.app.ui.util.DishImageLoader
 
 class MenuDishAdapter(
+    private val onAddToCart: (Dish) -> Unit,
     private val onDishClick: (Dish) -> Unit
 ) : ListAdapter<Dish, MenuDishAdapter.DishViewHolder>(DIFF_CALLBACK) {
+
 
     private var categoryNamesById: Map<String, String> = emptyMap()
 
@@ -32,6 +34,7 @@ class MenuDishAdapter(
         private val tvPrice: TextView = itemView.findViewById(R.id.tv_price)
         private val ivImage: ImageView = itemView.findViewById(R.id.iv_dish_image)
         private val tvBadge: TextView = itemView.findViewById(R.id.tv_badge)
+        private val btnAddToCart: View = itemView.findViewById(R.id.btn_add_to_cart)
 
         fun bind(dish: Dish) {
             tvTitle.text = dish.nom
@@ -51,8 +54,10 @@ class MenuDishAdapter(
                 tvBadge.visibility = View.GONE
             }
 
+            btnAddToCart.setOnClickListener { onAddToCart(dish) }
             itemView.setOnClickListener { onDishClick(dish) }
         }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DishViewHolder {

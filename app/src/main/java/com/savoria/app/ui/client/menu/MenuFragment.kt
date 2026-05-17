@@ -16,12 +16,16 @@ import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.progressindicator.CircularProgressIndicator
+import com.google.android.material.snackbar.Snackbar
 import com.savoria.app.R
+
 import com.savoria.app.data.local.entity.Category
 import com.savoria.app.data.local.entity.Dish
 import com.savoria.app.ui.SharedDishViewModel
 import com.savoria.app.ui.admin.login.LoginActivity
+import com.savoria.app.ui.client.cart.CartViewModel
 import com.savoria.app.ui.common.UiState
+
 import com.savoria.app.ui.common.bindListLoading
 import com.savoria.app.ui.util.DishImageLoader.toDetailArgs
 import kotlinx.coroutines.launch
@@ -29,6 +33,8 @@ import kotlinx.coroutines.launch
 class MenuFragment : Fragment() {
 
     private val viewModel: SharedDishViewModel by activityViewModels()
+    private val cartViewModel: CartViewModel by activityViewModels()
+
 
     private var allDishes: List<Dish> = emptyList()
     private var currentCategoryId: String? = null
@@ -56,7 +62,10 @@ class MenuFragment : Fragment() {
         }
         specialtyOnly = arguments?.getBoolean("specialtyOnly") == true
 
-        dishAdapter = MenuDishAdapter { navigateToDetail(it) }
+        dishAdapter = MenuDishAdapter(
+            onAddToCart = { dish -> addDishToCart(dish) },
+            onDishClick = { navigateToDetail(it) }
+        )
         promoAdapter = MenuPromoAdapter { openPromoDish() }
         chipAdapter = MenuCategoryChipAdapter { categoryId ->
             currentCategoryId = categoryId
@@ -100,7 +109,10 @@ class MenuFragment : Fragment() {
                         is UiState.Success -> {
                             recyclerChips.visibility = View.VISIBLE
                             populateCategoryChips(state.data)
+                            resolveInitialFilter()
+                            submitFilteredDishes()
                         }
+
                         UiState.Empty -> {
                             recyclerChips.visibility = View.VISIBLE
                             populateCategoryChips(emptyList())
@@ -128,6 +140,7 @@ class MenuFragment : Fragment() {
                         }
                         is UiState.Success -> {
                             allDishes = state.data
+                            resolveInitialFilter()
                             submitFilteredDishes()
                         }
                     }
@@ -135,6 +148,7 @@ class MenuFragment : Fragment() {
                 }
             }
         }
+
     }
 
     private fun updateLoadingIndicator() {
@@ -158,6 +172,29 @@ class MenuFragment : Fragment() {
         chipAdapter.submitList(chips)
     }
 
+    private fun resolveInitialFilter() {
+        val filter = currentCategoryId ?: return
+        val categories = (viewModel.allCategoriesState.value as? UiState.Success)?.data ?: return
+        
+        // If it's already a valid ID, do nothing
+        if (categories.any { it.id == filter }) return
+
+        // Otherwise, try to map the English tag to a real ID
+        val resolvedId = when (filter.lowercase()) {
+            "mains" -> categories.find { it.nom.lowercase().contains("plat") || it.nom.lowercase().contains("main") }?.id
+            "seafood" -> categories.find { it.nom.lowercase().contains("mer") || it.nom.lowercase().contains("seafood") }?.id
+            "desserts" -> categories.find { it.nom.lowercase().contains("dessert") }?.id
+            "starters" -> categories.find { it.nom.lowercase().contains("entrée") || it.nom.lowercase().contains("starter") }?.id
+            else -> categories.find { it.nom.equals(filter, ignoreCase = true) }?.id
+        }
+        
+        resolvedId?.let {
+            currentCategoryId = it
+            chipAdapter.selectedCategoryId = it
+            chipAdapter.notifyDataSetChanged()
+        }
+    }
+
     private fun submitFilteredDishes() {
         val filtered = allDishes.filter { dish ->
             val matchesCategory = currentCategoryId == null || dish.categoryId == currentCategoryId
@@ -168,6 +205,7 @@ class MenuFragment : Fragment() {
         dishAdapter.submitList(filtered)
         updateEmptyState(filtered)
     }
+
 
     private fun updateEmptyState(filtered: List<Dish>) {
         if (viewModel.allDishesState.value is UiState.Loading) return
@@ -204,4 +242,14 @@ class MenuFragment : Fragment() {
     private fun navigateToDetail(dish: Dish) {
         findNavController().navigate(R.id.action_menu_to_detail, dish.toDetailArgs())
     }
+ 
+    private fun addDishToCart(dish: Dish) {
+        cartViewModel.addToCart(dish, cartViewModel.consumptionMode.value)
+        Snackbar.make(requireView(), getString(R.string.added_to_cart, dish.nom), Snackbar.LENGTH_SHORT)
+            .setAction(R.string.view_cart) {
+                findNavController().navigate(R.id.navigation_cart)
+            }
+            .show()
+    }
 }
+

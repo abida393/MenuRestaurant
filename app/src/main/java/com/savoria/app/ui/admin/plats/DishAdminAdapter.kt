@@ -35,19 +35,39 @@ class DishAdminAdapter(
 
             binding.btnValidate.visibility =
                 if (showValidateButton && !dish.isValidatedByAdmin) View.VISIBLE else View.GONE
-            binding.btnValidate.setOnClickListener { onValidate(dish) }
-
-            binding.switchAvailable.setOnCheckedChangeListener(null)
-            binding.switchAvailable.isChecked = dish.disponible
-            binding.switchAvailable.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked != dish.disponible) {
-                    onAvailabilityChanged(dish, isChecked)
+            binding.btnValidate.setOnClickListener {
+                val pos = bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION) {
+                    onValidate(getItem(pos))
                 }
             }
 
-            binding.btnEdit.setOnClickListener { onEdit(dish) }
-            binding.btnDelete.setOnClickListener { onDelete(dish) }
+            binding.switchAvailable.setOnCheckedChangeListener(null)
+            binding.switchAvailable.isChecked = dish.disponible
+            binding.switchAvailable.setOnCheckedChangeListener { buttonView, isChecked ->
+                val pos = bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION) {
+                    val currentDish = getItem(pos)
+                    if (buttonView.isPressed && isChecked != currentDish.disponible) {
+                        onAvailabilityChanged(currentDish, isChecked)
+                    }
+                }
+            }
+
+            binding.btnEdit.setOnClickListener {
+                val pos = bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION) {
+                    onEdit(getItem(pos))
+                }
+            }
+            binding.btnDelete.setOnClickListener {
+                val pos = bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION) {
+                    onDelete(getItem(pos))
+                }
+            }
             binding.root.alpha = if (dish.disponible) 1.0f else 0.6f
+
         }
     }
 

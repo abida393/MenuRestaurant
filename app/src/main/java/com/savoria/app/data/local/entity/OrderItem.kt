@@ -29,6 +29,8 @@ data class OrderItem(
     val orderId: String,
     val dishId: String?,
     val quantite: Int,
+    val nomPlat: String,
     val instructions: String,
     val statutItem: OrderItemStatus
 )
+

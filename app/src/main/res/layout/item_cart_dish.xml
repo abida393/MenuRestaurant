@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -24,36 +26,67 @@
             android:textColor="@android:color/black" />
 
         <TextView
-            android:id="@+id/tv_cart_dish_quantity"
-            android:layout_width="match_parent"
+            android:id="@+id/tv_cart_dish_price"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Qty: 1"
+            android:text="24,00 €"
             android:textSize="14sp"
-            android:textColor="#666666"
-            android:layout_marginTop="4dp" />
+            android:textStyle="bold"
+            android:textColor="#A02020"
+            android:layout_marginTop="2dp" />
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tv_cart_dish_price"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="24,00 €"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="#A02020"
-        android:layout_marginEnd="12dp" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_vertical">
 
-    <TextView
+        <ImageButton
+            android:id="@+id/btn_decrement"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_btn_grey_pill"
+            android:src="@drawable/ic_remove"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:contentDescription="Moins" />
+
+        <TextView
+            android:id="@+id/tv_cart_dish_quantity"
+            android:layout_width="36dp"
+            android:layout_height="wrap_content"
+            android:text="1"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:gravity="center" />
+
+        <ImageButton
+            android:id="@+id/btn_increment"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_btn_red_small"
+            android:src="@drawable/ic_add"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:contentDescription="Plus" />
+
+    </LinearLayout>
+
+    <ImageButton
         android:id="@+id/btn_remove_cart_item"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="✕"
-        android:textSize="20sp"
-        android:textColor="#A02020"
-        android:clickable="true"
-        android:focusable="true"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp" />
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="12dp"
+        android:layout_gravity="center_vertical"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_close"
+        app:tint="#CCCCCC"
+        android:contentDescription="Supprimer" />
+
+
 
 </LinearLayout>
