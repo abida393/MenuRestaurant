@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -51,6 +53,38 @@ class ChefOrdersFragment : Fragment() {
                 emptyView.visibility = if (isEmpty) View.VISIBLE else View.GONE
                 recycler.visibility = if (isEmpty) View.GONE else View.VISIBLE
             }
+        }
+
+        // Show navigation bar when the screen is clicked/touched anywhere
+        val showNavListener = View.OnTouchListener { _, _ ->
+            setSystemNavigationBarVisible(true)
+            false
+        }
+        view.setOnTouchListener(showNavListener)
+        recycler.setOnTouchListener(showNavListener)
+        emptyView.setOnTouchListener(showNavListener)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setSystemNavigationBarVisible(false)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        setSystemNavigationBarVisible(true)
+    }
+
+    private fun setSystemNavigationBarVisible(visible: Boolean) {
+        val activity = activity ?: return
+        val window = activity.window
+        val decorView = window.decorView
+        val controller = WindowInsetsControllerCompat(window, decorView)
+        if (visible) {
+            controller.show(WindowInsetsCompat.Type.navigationBars())
+        } else {
+            controller.hide(WindowInsetsCompat.Type.navigationBars())
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
     }
 }

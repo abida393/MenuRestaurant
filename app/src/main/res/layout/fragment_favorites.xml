@@ -31,7 +31,8 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@android:drawable/ic_menu_sort_by_size"
-                    android:tint="#1C1C1A" />
+                    android:tint="#1C1C1A"
+                    android:visibility="gone" />
 
                 <TextView
                     android:layout_width="0dp"

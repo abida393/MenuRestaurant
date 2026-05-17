@@ -20,31 +20,15 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_sort_by_size"
-                android:tint="#1C1C1A" />
-
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
                 android:layout_weight="1"
                 android:fontFamily="serif"
                 android:text="Savoria"
                 android:textColor="#1C1C1A"
                 android:textSize="20sp"
                 android:textStyle="bold|italic" />
-
-            <ImageView
-                android:id="@+id/iv_avatar"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/bg_stat_card_dark"
-                android:padding="2dp"
-                android:src="@android:drawable/ic_menu_myplaces"
-                android:tint="#FFFFFF" />
         </LinearLayout>
 
         <!-- ── GREETING ── -->
@@ -64,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:fontFamily="serif"
-            android:text="Bonjour, Chef 👋"
+            android:text="Bonjour, Admin 👋"
             android:textColor="#A02020"
             android:textSize="40sp"
             android:textStyle="bold|italic" />

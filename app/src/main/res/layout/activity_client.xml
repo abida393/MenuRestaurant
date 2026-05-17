@@ -35,6 +35,7 @@
             android:background="#FFFFFF"
             app:itemIconTint="@color/nav_item_color"
             app:itemTextColor="@color/nav_item_color"
+            app:labelVisibilityMode="unlabeled"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -49,6 +50,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="#FFFFFF"
+        android:visibility="gone"
         app:headerLayout="@layout/nav_header_client"
         app:menu="@menu/menu_sidebar" />
 

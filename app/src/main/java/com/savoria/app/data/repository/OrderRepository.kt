@@ -59,7 +59,7 @@ class OrderRepository(
         }
     }
 
-    val kitchenStats: Flow<Int> = orderDao.countCompletedOrders()
+    val kitchenStats: Flow<Int> = orderDao.countAllOrders()
 
     suspend fun startPreparation(orderId: String) {
         orderDao.updateOrderStatus(orderId, OrderStatus.EN_PREPARATION)

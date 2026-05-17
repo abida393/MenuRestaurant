@@ -133,8 +133,8 @@ class AdminViewModel(
     }
 
     fun addDish(dish: Dish) = viewModelScope.launch {
-        repositoryInsert(dish.copy(isValidatedByAdmin = true))
-        _saveMessage.value = "Plat ajouté"
+        repositoryInsert(dish)
+        _saveMessage.value = if (dish.isValidatedByAdmin) "Plat ajouté" else "Plat soumis pour validation"
     }
 
     fun updateDish(dish: Dish) = viewModelScope.launch {

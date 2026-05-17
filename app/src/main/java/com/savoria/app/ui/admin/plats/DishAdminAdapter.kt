@@ -14,6 +14,7 @@ class DishAdminAdapter(
     private val onDelete: (Dish) -> Unit,
     private val onAvailabilityChanged: (Dish, Boolean) -> Unit,
     private val onValidate: (Dish) -> Unit,
+    private val onRefuse: (Dish) -> Unit,
     private val showValidateButton: Boolean = true
 ) : ListAdapter<Dish, DishAdminAdapter.DishViewHolder>(DIFF_CALLBACK) {
 
@@ -33,12 +34,22 @@ class DishAdminAdapter(
             binding.badgeChefSpecialty.visibility =
                 if (dish.isChefSpecial) View.VISIBLE else View.GONE
 
+            val isPending = !dish.isValidatedByAdmin
             binding.btnValidate.visibility =
-                if (showValidateButton && !dish.isValidatedByAdmin) View.VISIBLE else View.GONE
+                if (showValidateButton && isPending) View.VISIBLE else View.GONE
             binding.btnValidate.setOnClickListener {
                 val pos = bindingAdapterPosition
                 if (pos != RecyclerView.NO_POSITION) {
                     onValidate(getItem(pos))
+                }
+            }
+
+            binding.btnRefuse.visibility =
+                if (showValidateButton && isPending) View.VISIBLE else View.GONE
+            binding.btnRefuse.setOnClickListener {
+                val pos = bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION) {
+                    onRefuse(getItem(pos))
                 }
             }
 
@@ -53,6 +64,10 @@ class DishAdminAdapter(
                     }
                 }
             }
+
+            val showActions = !isPending
+            binding.btnEdit.visibility = if (showActions) View.VISIBLE else View.GONE
+            binding.btnDelete.visibility = if (showActions) View.VISIBLE else View.GONE
 
             binding.btnEdit.setOnClickListener {
                 val pos = bindingAdapterPosition

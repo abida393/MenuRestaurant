@@ -65,6 +65,7 @@ class GestionPlatsFragment : Fragment() {
                 viewModel.setAvailability(dish, available)
             },
             onValidate = { dish -> viewModel.validateDish(dish) },
+            onRefuse = { dish -> viewModel.deleteDish(dish) },
             showValidateButton = isAdminHost
         )
 

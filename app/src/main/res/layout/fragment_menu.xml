@@ -33,7 +33,8 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Menu"
                     android:padding="8dp"
-                    android:src="@android:drawable/ic_menu_sort_by_size" />
+                    android:src="@android:drawable/ic_menu_sort_by_size"
+                    android:visibility="gone" />
 
                 <TextView
                     android:layout_width="0dp"

@@ -37,9 +37,14 @@ class SavoriaApplication : Application() {
         OrderExcuseNotifier(this, database.orderDao(), applicationScope)
     }
 
+    private val dishValidationNotifier by lazy {
+        com.savoria.app.notification.DishValidationNotifier(this, database.dishDao(), applicationScope)
+    }
+
     override fun onCreate() {
         super.onCreate()
         orderReadyNotifier.start()
         orderExcuseNotifier.start()
+        dishValidationNotifier.start()
     }
 }

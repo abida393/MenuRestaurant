@@ -131,6 +131,12 @@ class DishDialogFragment : DialogFragment() {
             else -> true
         }
 
+        val finalPhotoUrl = if (photoUrl.startsWith("content:")) {
+            DishImageLoader.saveImageLocally(requireContext(), Uri.parse(photoUrl))
+        } else {
+            photoUrl
+        }
+
         val dish = Dish(
             id = existingDishId ?: UUID.randomUUID().toString(),
             nom = nom,
@@ -138,7 +144,7 @@ class DishDialogFragment : DialogFragment() {
             prix = prix,
             prixFormat = String.format("%.2f €", prix),
             categoryId = categoryId,
-            photoUrl = photoUrl.ifBlank { "dish_placeholder" },
+            photoUrl = finalPhotoUrl.ifBlank { "dish_placeholder" },
             disponible = existingDisponible,
             isFavorite = existingIsFavorite,
             isChefSpecialty = isSpecialty,

@@ -38,10 +38,10 @@ interface DishDao {
     @Query("SELECT * FROM dishes WHERE id = :dishId")
     suspend fun getDishById(dishId: String): Dish?
 
-    @Query("SELECT * FROM dishes WHERE categoryId = :categoryId AND disponible = 1")
+    @Query("SELECT * FROM dishes WHERE categoryId = :categoryId AND disponible = 1 AND isValidatedByAdmin = 1")
     fun getDishesByCategory(categoryId: String): Flow<List<Dish>>
 
-    @Query("SELECT * FROM dishes WHERE isFavorite = 1")
+    @Query("SELECT * FROM dishes WHERE isFavorite = 1 AND isValidatedByAdmin = 1")
     fun getFavoriteDishes(): Flow<List<Dish>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

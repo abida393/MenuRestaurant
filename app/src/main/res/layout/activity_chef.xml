@@ -25,6 +25,7 @@
         android:background="@color/savoria_card"
         app:itemIconTint="@color/chef_bottom_nav_color"
         app:itemTextColor="@color/chef_bottom_nav_color"
+        app:labelVisibilityMode="unlabeled"
         app:menu="@menu/menu_chef_bottom_nav" />
 
 </LinearLayout>

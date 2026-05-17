@@ -42,6 +42,7 @@ class ClientActivity : AppCompatActivity() {
         requestNotificationPermissionIfNeeded()
 
         drawerLayout = findViewById(R.id.drawer_layout)
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
         // Adjust for system bars
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.client_root_container)) { v, insets ->
@@ -54,7 +55,10 @@ class ClientActivity : AppCompatActivity() {
         val bottomNav: BottomNavigationView = findViewById(R.id.client_bottom_nav)
         ViewCompat.setOnApplyWindowInsetsListener(bottomNav) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(0, 0, 0, systemBars.bottom)
+            v.setPadding(0, 0, 0, 0)
+            val params = v.layoutParams as android.view.ViewGroup.MarginLayoutParams
+            params.bottomMargin = systemBars.bottom
+            v.layoutParams = params
             insets
         }
 

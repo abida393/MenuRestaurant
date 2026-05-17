@@ -167,6 +167,14 @@ class AddEditDishFragment : Fragment() {
             viewModel.allDishes.value.find { it.id == id }
         }
 
+        val finalPhotoUrl = selectedImageUri?.let { uri ->
+            if (uri.toString().startsWith("content:")) {
+                DishImageLoader.saveImageLocally(requireContext(), uri)
+            } else {
+                uri.toString()
+            }
+        } ?: existing?.photoUrl ?: "dish_placeholder"
+
         val dish = Dish(
             id = editingDishId ?: UUID.randomUUID().toString(),
             nom = name,
@@ -175,9 +183,7 @@ class AddEditDishFragment : Fragment() {
             prixPromo = promoPrice,
             prixFormat = String.format(Locale.FRANCE, "%.2f €", price),
             description = etDescription.text.toString().trim(),
-            photoUrl = selectedImageUri?.toString()
-                ?: existing?.photoUrl
-                ?: "dish_placeholder",
+            photoUrl = finalPhotoUrl,
             disponible = switchAvailable.isChecked,
             isFavorite = existing?.isFavorite ?: false,
             isChefSpecialty = isSpecialty,

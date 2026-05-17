@@ -53,7 +53,10 @@ class AdminActivity : AppCompatActivity() {
         val bottomNav: BottomNavigationView = findViewById(R.id.admin_bottom_nav)
         ViewCompat.setOnApplyWindowInsetsListener(bottomNav) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(0, 0, 0, systemBars.bottom)
+            v.setPadding(0, 0, 0, 0)
+            val params = v.layoutParams as android.view.ViewGroup.MarginLayoutParams
+            params.bottomMargin = systemBars.bottom
+            v.layoutParams = params
             insets
         }
 
