@@ -24,6 +24,143 @@
         android:textColor="#777770"
         android:textSize="13sp" />
 
+    <!-- Order Progress Stepper -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_stepper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="24dp"
+        android:paddingHorizontal="8dp">
+
+        <!-- Step 1: Confirmé -->
+        <View
+            android:id="@+id/step_1_circle"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:background="@drawable/bg_step_circle_inactive"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/line_1" />
+
+        <TextView
+            android:id="@+id/tv_step_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Confirmé"
+            android:textColor="#999990"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/step_1_circle"
+            app:layout_constraintStart_toStartOf="@id/step_1_circle"
+            app:layout_constraintEnd_toEndOf="@id/step_1_circle" />
+
+        <!-- Line 1 -->
+        <View
+            android:id="@+id/line_1"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="#E8E3DC"
+            android:layout_marginTop="5dp"
+            app:layout_constraintTop_toTopOf="@id/step_1_circle"
+            app:layout_constraintStart_toEndOf="@id/step_1_circle"
+            app:layout_constraintEnd_toStartOf="@+id/step_2_circle" />
+
+        <!-- Step 2: En cuisine -->
+        <View
+            android:id="@+id/step_2_circle"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:background="@drawable/bg_step_circle_inactive"
+            app:layout_constraintStart_toEndOf="@id/line_1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/line_2" />
+
+        <TextView
+            android:id="@+id/tv_step_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="En cuisine"
+            android:textColor="#999990"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/step_2_circle"
+            app:layout_constraintStart_toStartOf="@id/step_2_circle"
+            app:layout_constraintEnd_toEndOf="@id/step_2_circle" />
+
+        <!-- Line 2 -->
+        <View
+            android:id="@+id/line_2"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="#E8E3DC"
+            android:layout_marginTop="5dp"
+            app:layout_constraintTop_toTopOf="@id/step_2_circle"
+            app:layout_constraintStart_toEndOf="@id/step_2_circle"
+            app:layout_constraintEnd_toStartOf="@+id/step_3_circle" />
+
+        <!-- Step 3: Prêt -->
+        <View
+            android:id="@+id/step_3_circle"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:background="@drawable/bg_step_circle_inactive"
+            app:layout_constraintStart_toEndOf="@id/line_2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/line_3" />
+
+        <TextView
+            android:id="@+id/tv_step_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Prêt"
+            android:textColor="#999990"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/step_3_circle"
+            app:layout_constraintStart_toStartOf="@id/step_3_circle"
+            app:layout_constraintEnd_toEndOf="@id/step_3_circle" />
+
+        <!-- Line 3 -->
+        <View
+            android:id="@+id/line_3"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="#E8E3DC"
+            android:layout_marginTop="5dp"
+            app:layout_constraintTop_toTopOf="@id/step_3_circle"
+            app:layout_constraintStart_toEndOf="@id/step_3_circle"
+            app:layout_constraintEnd_toStartOf="@+id/step_4_circle" />
+
+        <!-- Step 4: Livré -->
+        <View
+            android:id="@+id/step_4_circle"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:background="@drawable/bg_step_circle_inactive"
+            app:layout_constraintStart_toEndOf="@id/line_3"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_step_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Livré"
+            android:textColor="#999990"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/step_4_circle"
+            app:layout_constraintStart_toStartOf="@id/step_4_circle"
+            app:layout_constraintEnd_toEndOf="@id/step_4_circle" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

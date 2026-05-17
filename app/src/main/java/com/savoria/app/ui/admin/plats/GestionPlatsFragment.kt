@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.progressindicator.CircularProgressIndicator
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.savoria.app.R
 import com.savoria.app.SavoriaApplication
@@ -21,7 +22,10 @@ import com.savoria.app.ui.common.UiState
 import com.savoria.app.ui.common.bindListLoading
 import com.savoria.app.ui.viewmodel.AdminViewModel
 import com.savoria.app.ui.viewmodel.AdminViewModelFactory
+import com.savoria.app.data.local.entity.Dish
 import kotlinx.coroutines.launch
+
+
 
 class GestionPlatsFragment : Fragment() {
 
@@ -31,6 +35,7 @@ class GestionPlatsFragment : Fragment() {
 
     private lateinit var adapter: DishAdminAdapter
     private var showPendingOnly = false
+    private var currentDishes: List<Dish> = emptyList()
     private val isAdminHost: Boolean
         get() = activity is AdminActivity
 
@@ -89,26 +94,34 @@ class GestionPlatsFragment : Fragment() {
             viewModel.allDishesState.collect { state ->
                 when (state) {
                     UiState.Loading -> progress.bindListLoading(true)
-                    else -> {
+                    is UiState.Success -> {
                         progress.bindListLoading(false)
+                        currentDishes = state.data
+                        refreshList()
+                    }
+                    UiState.Empty -> {
+                        progress.bindListLoading(false)
+                        currentDishes = emptyList()
                         refreshList()
                     }
                 }
             }
         }
 
-        view.findViewById<FloatingActionButton>(R.id.fabAddDish)?.setOnClickListener {
-            if (isAdminHost) {
-                findNavController().navigate(R.id.navigation_add_dish)
-            } else {
-                DishDialogFragment.newInstance(null, isChefMode = true)
-                    .show(childFragmentManager, DishDialogFragment.TAG)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.saveMessage.collect { message ->
+                if (message != null) {
+                    Snackbar.make(view, message, Snackbar.LENGTH_LONG).show()
+                    viewModel.clearSaveMessage()
+                }
             }
         }
+
     }
 
+
     private fun refreshList() {
-        val dishes = viewModel.allDishes.value
+        val dishes = currentDishes
         val filtered = if (showPendingOnly) {
             dishes.filter { !it.isValidatedByAdmin }
         } else {
@@ -116,4 +129,5 @@ class GestionPlatsFragment : Fragment() {
         }
         adapter.submitList(filtered)
     }
+
 }

@@ -50,8 +50,9 @@ class SuiviOrderAdapter :
                 "Total : ${String.format(Locale.FRANCE, "%.2f €", order.total)}"
             } else {
                 item.items.joinToString("\n") { line ->
-                    "• ${line.quantite}× article"
+                    "• ${line.quantite}× ${line.nomPlat}"
                 } + "\nTotal : ${String.format(Locale.FRANCE, "%.2f €", order.total)}"
+
             }
         }
     }

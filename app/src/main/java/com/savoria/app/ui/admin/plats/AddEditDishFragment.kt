@@ -192,7 +192,7 @@ class AddEditDishFragment : Fragment() {
             viewModel.updateDish(dish)
         }
 
-        Toast.makeText(requireContext(), R.string.dish_saved, Toast.LENGTH_SHORT).show()
         findNavController().popBackStack()
     }
 }
+

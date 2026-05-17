@@ -154,13 +154,6 @@
                     android:textSize="36sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="↗ +4 depuis la semaine dernière"
-                    android:textColor="#22A060"
-                    android:textSize="12sp" />
             </LinearLayout>
 
             <ImageView
@@ -196,7 +189,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/tv_total_categories"
+                    android:id="@+id/tv_chef_specialties"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -248,7 +241,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/tv_active_promos"
+                    android:id="@+id/tv_pending_validation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"

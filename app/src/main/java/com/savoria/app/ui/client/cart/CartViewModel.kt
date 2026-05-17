@@ -64,7 +64,24 @@ class CartViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun removeFromCart(item: CartItemEntity) {
+        decrementQuantity(item)
+    }
+
+    fun forceRemoveFromCart(item: CartItemEntity) {
         viewModelScope.launch { app.cartRepository.removeItem(item) }
+    }
+
+
+    fun incrementQuantity(item: CartItemEntity) {
+        viewModelScope.launch {
+            app.cartRepository.updateQuantity(item, item.quantite + 1)
+        }
+    }
+
+    fun decrementQuantity(item: CartItemEntity) {
+        viewModelScope.launch {
+            app.cartRepository.updateQuantity(item, item.quantite - 1)
+        }
     }
 
     fun clearOrderPlacedEvent() {

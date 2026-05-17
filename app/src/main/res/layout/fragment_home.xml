@@ -177,12 +177,16 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/bg_btn_white_pill"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:foreground="?attr/selectableItemBackgroundBorderless"
                                 android:paddingHorizontal="16dp"
                                 android:paddingVertical="8dp"
                                 android:text="VOIR LE PLAT"
                                 android:textColor="#1C1C1A"
                                 android:textSize="10sp"
                                 android:textStyle="bold" />
+
                         </LinearLayout>
                     </LinearLayout>
                 </FrameLayout>
@@ -223,9 +227,13 @@
                     android:layout_height="100dp"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
                     app:cardCornerRadius="14dp"
                     app:cardElevation="0dp"
                     app:cardBackgroundColor="#1C1C1A">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -258,9 +266,13 @@
                     android:layout_height="100dp"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
                     app:cardCornerRadius="14dp"
                     app:cardElevation="0dp"
                     app:cardBackgroundColor="#A02020">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -300,9 +312,13 @@
                     android:layout_height="100dp"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
                     app:cardCornerRadius="14dp"
                     app:cardElevation="0dp"
                     app:cardBackgroundColor="#3B6496">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -335,9 +351,13 @@
                     android:layout_height="100dp"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
                     app:cardCornerRadius="14dp"
                     app:cardElevation="0dp"
                     app:cardBackgroundColor="#3D7A4B">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"

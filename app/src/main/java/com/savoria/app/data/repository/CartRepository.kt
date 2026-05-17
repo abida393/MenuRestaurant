@@ -28,5 +28,13 @@ class CartRepository(private val cartDao: CartDao) {
 
     suspend fun removeItem(item: CartItemEntity) = cartDao.deleteById(item.id)
 
+    suspend fun updateQuantity(item: CartItemEntity, newQuantity: Int) {
+        if (newQuantity <= 0) {
+            cartDao.deleteById(item.id)
+        } else {
+            cartDao.insert(item.copy(quantite = newQuantity))
+        }
+    }
+
     suspend fun clear(sessionId: String) = cartDao.clearSession(sessionId)
 }

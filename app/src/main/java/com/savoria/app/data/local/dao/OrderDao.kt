@@ -94,12 +94,14 @@ interface OrderDao {
         SELECT oi.dishId AS dishId, SUM(oi.quantite) AS totalQuantity
         FROM order_items AS oi
         INNER JOIN orders AS o ON o.id = oi.orderId
+        INNER JOIN dishes AS d ON d.id = oi.dishId
         WHERE oi.dishId IS NOT NULL
         GROUP BY oi.dishId
         ORDER BY totalQuantity DESC
         """
     )
     fun observeDishSalesAggregates(): Flow<List<DishSalesAggregate>>
+
 
     @Transaction
     @Query(

@@ -33,7 +33,20 @@
             android:textSize="9sp"
             android:textStyle="bold"
             tools:text="NEW" />
+
+        <ImageButton
+            android:id="@+id/btn_add_to_cart"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="12dp"
+            android:background="@drawable/bg_add_button"
+            android:contentDescription="Add to cart"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_add" />
     </FrameLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"

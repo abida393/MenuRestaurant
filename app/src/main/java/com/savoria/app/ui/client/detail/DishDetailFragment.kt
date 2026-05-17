@@ -26,6 +26,8 @@ import java.util.UUID
 class DishDetailFragment : Fragment() {
 
     private val cartViewModel: CartViewModel by activityViewModels()
+    private val dishViewModel: SharedDishViewModel by activityViewModels()
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,8 +55,9 @@ class DishDetailFragment : Fragment() {
         val btnAdd = view.findViewById<TextView>(R.id.btn_add_to_selection)
         btnAdd.text = "AJOUTER À LA SÉLECTION — $price   "
 
-        val dish = Dish(
-            id = arguments?.getString("dishId") ?: UUID.randomUUID().toString(),
+        val dishId = arguments?.getString("dishId")
+        val dish = dishViewModel.allDishes.value.find { it.id == dishId } ?: Dish(
+            id = dishId ?: UUID.randomUUID().toString(),
             nom = title,
             categoryId = null,
             prix = arguments?.getDouble("prixRaw") ?: 0.0,
@@ -63,6 +66,7 @@ class DishDetailFragment : Fragment() {
             photoUrl = photoUrl,
             disponible = true
         )
+
 
         btnAdd.setOnClickListener {
             val sheet = ConsumptionModeBottomSheet.newInstance(dish)
@@ -83,12 +87,13 @@ class DishDetailFragment : Fragment() {
     }
 
     private fun loadSimilarDishes(view: View, currentTitle: String) {
-        val viewModel = ViewModelProvider(requireActivity())[SharedDishViewModel::class.java]
         val container: LinearLayout = view.findViewById(R.id.ll_similar_dishes)
+
         val inflater = LayoutInflater.from(context)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.allDishesState.collect { state ->
+            dishViewModel.allDishesState.collect { state ->
+
                 container.removeAllViews()
                 val allDishes = when (state) {
                     is UiState.Success -> state.data

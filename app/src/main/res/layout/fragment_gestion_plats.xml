@@ -50,15 +50,4 @@
                 app:indicatorColor="#A02020" />
         </FrameLayout>
     </LinearLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAddDish"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="24dp"
-        app:srcCompat="@android:drawable/ic_input_add"
-        app:backgroundTint="#A02020"
-        app:tint="#FFFFFF"/>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -86,16 +86,30 @@ class AdminActivity : AppCompatActivity() {
         bottomNav.setupWithNavController(navController)
 
         fabAddDish.setOnClickListener {
-            if (navController.currentDestination?.id != R.id.navigation_add_dish) {
-                navController.navigate(R.id.navigation_add_dish)
+            when (navController.currentDestination?.id) {
+                R.id.navigation_dashboard -> {
+                    navController.navigate(R.id.action_dashboard_to_add_dish)
+                }
+                R.id.navigation_plats -> {
+                    navController.navigate(R.id.action_plats_to_add_dish)
+                }
             }
         }
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            val showFab = destination.id == R.id.navigation_dashboard ||
-                destination.id == R.id.navigation_plats
-            fabAddDish.visibility = if (showFab) View.VISIBLE else View.GONE
+            when (destination.id) {
+                R.id.navigation_dashboard, R.id.navigation_plats -> {
+                    fabAddDish.visibility = View.VISIBLE
+                }
+                R.id.navigation_categories, R.id.navigation_users, R.id.navigation_add_dish -> {
+                    fabAddDish.visibility = View.GONE
+                }
+                else -> {
+                    fabAddDish.visibility = View.GONE
+                }
+            }
         }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

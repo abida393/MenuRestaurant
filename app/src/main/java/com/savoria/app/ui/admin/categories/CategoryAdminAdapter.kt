@@ -26,9 +26,17 @@ class CategoryAdminAdapter(
                 category.ordreAffichage,
                 category.id
             )
-            itemView.setOnClickListener { onCategoryClick(category) }
+            itemView.setOnClickListener {
+                val pos = bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION) {
+                    onCategoryClick(getItem(pos))
+                }
+            }
             itemView.setOnLongClickListener {
-                onCategoryLongClick(category)
+                val pos = bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION) {
+                    onCategoryLongClick(getItem(pos))
+                }
                 true
             }
         }
@@ -50,7 +58,10 @@ class CategoryAdminAdapter(
                 oldItem.id == newItem.id
 
             override fun areContentsTheSame(oldItem: Category, newItem: Category) =
-                oldItem == newItem
+                oldItem.id == newItem.id &&
+                oldItem.nom == newItem.nom &&
+                oldItem.ordreAffichage == newItem.ordreAffichage
         }
     }
+
 }
