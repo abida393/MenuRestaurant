@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.savoria.app.R
@@ -34,10 +33,6 @@ class ChefPlatsFragment : Fragment() {
         adapter = ChefDishAdapter()
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = adapter
-
-        view.findViewById<View>(R.id.btn_plats_back).setOnClickListener {
-            findNavController().navigateUp()
-        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.dishes.collect { dishes ->

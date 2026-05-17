@@ -94,10 +94,8 @@ class OrderAdapter(
             card.alpha = if (isArchived) 0.5f else 1f
             card.cardElevation = if (isArchived) 0f else 4f
 
-            val canExcuse = !isArchived && (
-                order.statut == OrderStatus.EN_ATTENTE ||
-                    order.statut == OrderStatus.EN_PREPARATION
-                )
+            val isInProgress = order.statut == OrderStatus.EN_ATTENTE ||
+                order.statut == OrderStatus.EN_PREPARATION
 
             if (isArchived) {
                 btnStart.visibility = View.GONE
@@ -114,7 +112,7 @@ class OrderAdapter(
                 } else {
                     View.GONE
                 }
-                btnExcuse.visibility = if (canExcuse) View.VISIBLE else View.GONE
+                btnExcuse.visibility = if (isInProgress) View.VISIBLE else View.GONE
 
                 btnStart.setOnClickListener { onStartPreparation(order.id) }
                 btnReady.setOnClickListener { onMarkReady(order.id) }
@@ -141,8 +139,22 @@ class OrderAdapter(
                 }
             }
 
-            override fun areContentsTheSame(oldItem: KitchenListItem, newItem: KitchenListItem) =
-                oldItem == newItem
+            override fun areContentsTheSame(oldItem: KitchenListItem, newItem: KitchenListItem): Boolean {
+                return when {
+                    oldItem is KitchenListItem.SectionHeader && newItem is KitchenListItem.SectionHeader ->
+                        oldItem.title == newItem.title
+                    oldItem is KitchenListItem.ActiveOrder && newItem is KitchenListItem.ActiveOrder ->
+                        sameKitchenCard(oldItem.card, newItem.card)
+                    oldItem is KitchenListItem.ArchivedOrder && newItem is KitchenListItem.ArchivedOrder ->
+                        sameKitchenCard(oldItem.card, newItem.card)
+                    else -> false
+                }
+            }
+
+            private fun sameKitchenCard(a: KitchenOrderCard, b: KitchenOrderCard): Boolean =
+                a.order.order.id == b.order.order.id &&
+                    a.order.order.statut == b.order.order.statut &&
+                    a.itemLines == b.itemLines
         }
     }
 }

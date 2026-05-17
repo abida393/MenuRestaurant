@@ -47,7 +47,7 @@
         <activity
             android:name=".ChefActivity"
             android:exported="false"
-            android:theme="@style/Theme.Savoria.NoActionBar" />
+            android:theme="@style/Theme.Savoria.Chef" />
 
         <activity
             android:name="com.savoria.app.ui.serveur.ServeurActivity"

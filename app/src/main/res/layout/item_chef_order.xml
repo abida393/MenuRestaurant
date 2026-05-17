@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardBackgroundColor="#FFFFFF"
+    app:cardBackgroundColor="@color/savoria_card"
     app:cardCornerRadius="16dp"
     app:cardElevation="4dp"
     app:strokeColor="#E8E4DF"
@@ -34,7 +34,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="serif"
-                    android:textColor="#1C1C1A"
+                    android:textColor="@color/savoria_text_primary"
                     android:textSize="17sp"
                     android:textStyle="bold"
                     tools:text="#D8EE24" />
@@ -44,7 +44,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:textColor="#777770"
+                    android:textColor="@color/savoria_text_muted"
                     android:textSize="13sp"
                     tools:text="14:32" />
             </LinearLayout>
@@ -85,7 +85,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:lineSpacingMultiplier="1.35"
-            android:textColor="#1C1C1A"
+            android:textColor="@color/savoria_text_primary"
             android:textSize="15sp"
             tools:text="• 2× Tartare de bœuf" />
 
@@ -131,7 +131,7 @@
             android:insetBottom="0dp"
             android:text="@string/btn_send_excuse"
             android:textAllCaps="false"
-            android:textColor="#555550"
+            android:textColor="@color/savoria_text_secondary"
             android:textSize="13sp"
             app:cornerRadius="12dp"
             app:strokeColor="#CCCCCC" />

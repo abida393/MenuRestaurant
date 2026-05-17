@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/chef_toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@color/savoria_card"
+    android:elevation="4dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="16dp">
+
+    <ImageButton
+        android:id="@+id/btn_chef_nav_back"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/back"
+        android:padding="8dp"
+        android:src="@android:drawable/ic_menu_revert"
+        android:visibility="gone"
+        app:tint="@color/savoria_text_primary" />
+
+    <TextView
+        android:id="@+id/chef_toolbar_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="12dp"
+        android:layout_weight="1"
+        android:layout_marginTop="16dp"
+        android:ellipsize="end"
+        android:fontFamily="serif"
+        android:maxLines="1"
+        android:textColor="@color/savoria_text_primary"
+        android:textSize="22sp"
+        android:textStyle="bold|italic" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        app:cardBackgroundColor="@color/savoria_accent"
+        app:cardCornerRadius="22dp"
+        app:cardElevation="2dp">
+
+        <ImageButton
+            android:id="@+id/btn_chef_logout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/chef_logout"
+            android:padding="10dp"
+            android:src="@android:drawable/ic_lock_power_off"
+            app:tint="@android:color/white" />
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>

@@ -84,7 +84,7 @@
     <string name="login_error_invalid">Identifiants incorrects. Vérifiez l\'email et le mot de passe.</string>
     <string name="login_error_inactive">Ce compte est désactivé. Contactez l\'administrateur.</string>
     <string name="login_recover_hint">Contactez l\'administrateur pour réinitialiser votre accès.</string>
-    <string name="login_staff_credentials_hint">Les mots de passe initiaux sont générés à la première installation et affichés une seule fois. Conservez-les en lieu sûr.</string>
+    <string name="login_staff_credentials_hint">Admin : admin@savoria.com / admin123 — Chef : chef@savoria.com / chef123. L\'administrateur peut modifier les mots de passe dans Gestion des utilisateurs.</string>
     <string name="initial_credentials_title">Comptes personnel — mots de passe initiaux</string>
     <string name="initial_credentials_message">Ces mots de passe ne seront plus affichés. Notez-les ou copiez-les avant de continuer.</string>
     <string name="initial_credentials_line">%1$s\n  Email : %2$s\n  Mot de passe : %3$s</string>

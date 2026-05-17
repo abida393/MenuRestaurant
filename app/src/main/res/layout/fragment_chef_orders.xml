@@ -5,17 +5,7 @@
     android:background="#F5F0EB"
     android:orientation="vertical"
     android:paddingHorizontal="16dp"
-    android:paddingTop="16dp">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="serif"
-        android:paddingBottom="12dp"
-        android:text="@string/chef_orders_title"
-        android:textColor="#1C1C1A"
-        android:textSize="24sp"
-        android:textStyle="bold|italic" />
+    android:paddingTop="8dp">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -27,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingBottom="80dp" />
+            android:paddingBottom="100dp" />
 
         <TextView
             android:id="@+id/tvEmptyOrders"

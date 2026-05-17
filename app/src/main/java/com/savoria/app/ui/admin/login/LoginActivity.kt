@@ -1,8 +1,5 @@
 package com.savoria.app.ui.admin.login
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -10,14 +7,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.savoria.app.ChefActivity
 import com.savoria.app.R
 import com.savoria.app.SavoriaApplication
-import com.savoria.app.data.local.InitialStaffCredentialsStore
-import com.savoria.app.data.local.SeededStaffCredential
 import com.savoria.app.data.local.database.SavoriaDatabase
 import com.savoria.app.data.local.StaffSessionManager
 import com.savoria.app.data.local.UserSeeder
@@ -35,7 +29,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var tvError: TextView
     private lateinit var tvRecover: TextView
     private lateinit var tvContactAdmin: TextView
-    private lateinit var tvDemoAccounts: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,8 +56,6 @@ class LoginActivity : AppCompatActivity() {
         tvError = findViewById(R.id.tv_error)
         tvRecover = findViewById(R.id.tv_recover)
         tvContactAdmin = findViewById(R.id.tv_contact_admin)
-        tvDemoAccounts = findViewById(R.id.tv_demo_accounts)
-        tvDemoAccounts.setText(R.string.login_staff_credentials_hint)
 
         lifecycleScope.launch {
             val database = SavoriaDatabase.getDatabase(
@@ -72,7 +63,6 @@ class LoginActivity : AppCompatActivity() {
                 (application as SavoriaApplication).applicationScope
             )
             UserSeeder.ensureStaffAccounts(this@LoginActivity, database.userDao())
-            maybeShowInitialCredentialsDialog()
         }
 
         btnLogin.setOnClickListener { attemptLogin() }
@@ -84,47 +74,6 @@ class LoginActivity : AppCompatActivity() {
         tvContactAdmin.setOnClickListener {
             Toast.makeText(this, "system@savoria.com", Toast.LENGTH_LONG).show()
         }
-    }
-
-    private fun maybeShowInitialCredentialsDialog() {
-        val pending = InitialStaffCredentialsStore(this).getPending()
-        if (pending.isEmpty()) return
-        showInitialCredentialsDialog(pending)
-    }
-
-    private fun showInitialCredentialsDialog(credentials: List<SeededStaffCredential>) {
-        val body = credentials.joinToString("\n\n") { cred ->
-            getString(
-                R.string.initial_credentials_line,
-                roleLabel(cred.role),
-                cred.email,
-                cred.plainPassword
-            )
-        }
-
-        AlertDialog.Builder(this)
-            .setTitle(R.string.initial_credentials_title)
-            .setMessage(getString(R.string.initial_credentials_message) + "\n\n" + body)
-            .setNeutralButton(R.string.initial_credentials_copy) { _, _ ->
-                copyCredentialsToClipboard(body)
-                Toast.makeText(this, R.string.initial_credentials_copied, Toast.LENGTH_SHORT).show()
-            }
-            .setPositiveButton(R.string.initial_credentials_ack) { _, _ ->
-                InitialStaffCredentialsStore(this).clearPending()
-            }
-            .setCancelable(false)
-            .show()
-    }
-
-    private fun roleLabel(role: UserRole): String = when (role) {
-        UserRole.ADMIN -> getString(R.string.role_admin)
-        UserRole.CHEF -> getString(R.string.role_chef)
-        UserRole.SERVEUR -> getString(R.string.role_serveur)
-    }
-
-    private fun copyCredentialsToClipboard(text: String) {
-        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clipboard.setPrimaryClip(ClipData.newPlainText("staff_credentials", text))
     }
 
     private fun attemptLogin() {

@@ -1,44 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F0EB"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="serif"
-            android:text="@string/chef_my_dishes"
-            android:textColor="#1C1C1A"
-            android:textSize="22sp"
-            android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/btn_plats_back"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/back"
-            android:padding="8dp"
-            android:src="@android:drawable/ic_menu_revert"
-            android:tint="#1C1C1A" />
-    </LinearLayout>
+    android:background="@color/savoria_cream"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="8dp">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_chef_dishes"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="12dp"
-        android:clipToPadding="false" />
+        android:clipToPadding="false"
+        android:paddingBottom="16dp" />
 
     <TextView
         android:id="@+id/tv_chef_dishes_empty"
@@ -46,6 +19,6 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="@string/chef_no_dishes"
-        android:textColor="#666666"
+        android:textColor="@color/savoria_text_secondary"
         android:visibility="gone" />
-</LinearLayout>
+</FrameLayout>

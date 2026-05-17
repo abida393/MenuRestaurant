@@ -1,29 +1,28 @@
 package com.savoria.app.data.local
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class UserSeederPasswordTest {
 
     @Test
-    fun generateSecurePassword_hasExpectedLength() {
-        val password = UserSeeder.generateSecurePassword()
-        assertEquals(16, password.length)
+    fun defaultPasswordFor_admin_returnsAdmin123() {
+        assertEquals("admin123", UserSeeder.defaultPasswordFor(UserSeeder.ADMIN_EMAIL))
     }
 
     @Test
-    fun generateSecurePassword_usesAllowedAlphabet() {
-        val allowed = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#%&*".toSet()
-        repeat(20) {
-            val password = UserSeeder.generateSecurePassword()
-            assertTrue(password.all { it in allowed })
-        }
+    fun defaultPasswordFor_chef_returnsChef123() {
+        assertEquals("chef123", UserSeeder.defaultPasswordFor(UserSeeder.CHEF_EMAIL))
     }
 
     @Test
-    fun generateSecurePassword_producesDistinctValues() {
-        val passwords = (1..10).map { UserSeeder.generateSecurePassword() }.toSet()
-        assertTrue(passwords.size > 1)
+    fun defaultPasswordFor_serveur_returnsServeur123() {
+        assertEquals("serveur123", UserSeeder.defaultPasswordFor(UserSeeder.SERVEUR_EMAIL))
+    }
+
+    @Test
+    fun defaultPasswordFor_unknownEmail_returnsNull() {
+        assertNull(UserSeeder.defaultPasswordFor("other@savoria.com"))
     }
 }

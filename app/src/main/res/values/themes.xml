@@ -31,4 +31,16 @@
     <style name="Theme.RestaurantManager" parent="Base.Theme.RestaurantManager" />
 
     <style name="Theme.Savoria.NoActionBar" parent="Theme.RestaurantManager" />
+
+    <!-- Chef / cuisine : thème clair forcé pour éviter texte clair sur fond crème (#F5F0EB). -->
+    <style name="Theme.Savoria.Chef" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+        <item name="android:colorBackground">@color/savoria_cream</item>
+        <item name="colorSurface">@color/savoria_card</item>
+        <item name="colorOnSurface">@color/savoria_text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/savoria_text_secondary</item>
+    </style>
 </resources>

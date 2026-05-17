@@ -2,4 +2,12 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="savoria_cream">#F5F0EB</color>
+    <color name="savoria_card">#FFFFFF</color>
+    <color name="savoria_text_primary">#1C1C1A</color>
+    <color name="savoria_text_secondary">#555555</color>
+    <color name="savoria_text_muted">#777770</color>
+    <color name="savoria_accent">#A02020</color>
+    <color name="savoria_stroke">#E8E4DF</color>
 </resources>
